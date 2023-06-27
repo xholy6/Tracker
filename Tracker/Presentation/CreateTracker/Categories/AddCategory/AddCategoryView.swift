@@ -20,6 +20,7 @@ final class AddCategoryView: UIView {
                                         placeholderText:
                                             AddCategoryViewConstants.textFieldPlaceholder)
         textField.addTarget(self, action: #selector(textFieldHasChanged), for: .editingChanged)
+        textField.delegate = self
         return textField
     }()
     private lazy var doneButton: UIButton = {
@@ -85,4 +86,12 @@ final class AddCategoryView: UIView {
         delegate?.dismissVC()
     }
     
+}
+
+extension AddCategoryView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+        
+    }
 }

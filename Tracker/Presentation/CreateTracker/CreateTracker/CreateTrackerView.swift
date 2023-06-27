@@ -55,6 +55,7 @@ final class CreateTrackerView: UIView {
         let textField = CustomTextField(frame: .zero,
                                         placeholderText: CreateTrackerViewConstants.textFieldPlaceholder)
         textField.addTarget(self, action: #selector(textFieldHasChanged), for: .editingChanged)
+        textField.delegate = self
         return textField
     }()
     
@@ -253,6 +254,13 @@ final class CreateTrackerView: UIView {
     //MARK: - Internal Method
     func refreshTableView() {
         categoryAndScheduleTableView.reloadData()
+    }
+}
+
+extension CreateTrackerView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
 

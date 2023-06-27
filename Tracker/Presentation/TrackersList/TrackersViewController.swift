@@ -136,11 +136,9 @@ final class TrackersViewController: UIViewController {
             var trackers: [Tracker] = []
             for tracker in category.trackers {
                 guard let weekDays = tracker.schedule else { return }
-                print("xxzxaadasdasdasdasda \(weekDays)")
                 for weekDay in weekDays {
                     if weekDay == date {
                         trackers.append(tracker)
-                        print("xxxxxxxasda\(trackers)")
                     } else {
                         continue
                     }
@@ -163,10 +161,7 @@ final class TrackersViewController: UIViewController {
             }
             
             visibleCategories = newCategories
-            print("hi")
             plugView.isHidden = visibleCategories.isEmpty ? false : true
-            print(plugView.isHidden)
-            print(visibleCategories)
             collectionView.reloadData()
             presentedViewController?.dismiss(animated: false, completion: nil)
         }
@@ -326,7 +321,7 @@ extension TrackersViewController: UISearchResultsUpdating {
         
         filteredCategories = newCategories
         
-        if filteredCategories.isEmpty && searchText != "" {
+        if filteredCategories.isEmpty || searchText != "" {
             plugView.isHidden = false
             plugView.config(title: "Ничего не найдено", image: UIImage(named: "notFound"))
         } else {
@@ -355,7 +350,6 @@ extension TrackersViewController: ChooseTypeTrackerViewControllerDelegate {
     }
     
     func createTrackerCategory(_ trackerCategory: TrackerCategory?) {
-        print("1231\(trackerCategory)")
         guard let trackerCategory else { return }
         guard !categories.contains(trackerCategory) else {
             for (index, category) in categories.enumerated() {
@@ -371,7 +365,6 @@ extension TrackersViewController: ChooseTypeTrackerViewControllerDelegate {
         }
         categories.append(trackerCategory)
         if !categories.isEmpty { plugView.isHidden = true }
-        print(categories)
         showVisibleTrackers()
         dismiss(animated: true)
     }

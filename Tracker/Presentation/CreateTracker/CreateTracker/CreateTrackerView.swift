@@ -83,7 +83,7 @@ final class CreateTrackerView: UIView {
     private lazy var emojiAndColorsCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        
+        collectionView.isScrollEnabled = false
         collectionView.register(EmojiCollectionViewCell.self,
                                 forCellWithReuseIdentifier: EmojiCollectionViewCell.identifier)
         collectionView.register(HeaderReusableView.self,

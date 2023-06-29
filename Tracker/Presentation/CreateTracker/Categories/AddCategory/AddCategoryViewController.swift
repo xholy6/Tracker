@@ -41,11 +41,7 @@ extension AddCategoryViewController: AddCategoryViewDelegate {
     func confirmNewCategory(with text: String) {
         category = text
     }
-    
-    func textFieldDidChanged(text: String) -> Bool {
-        !text.isEmpty
-    }
-    
+
     func dismissVC() {
         delegate?.sendCategory(category: category)
         dismiss(animated: true)

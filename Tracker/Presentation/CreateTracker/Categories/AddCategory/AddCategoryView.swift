@@ -1,7 +1,6 @@
 import UIKit
 
 protocol AddCategoryViewDelegate: AnyObject {
-    func textFieldDidChanged(text: String) -> Bool
     func confirmNewCategory(with text: String)
     func dismissVC()
 }
@@ -19,7 +18,7 @@ final class AddCategoryView: UIView {
         let textField = CustomTextField(frame: .zero,
                                         placeholderText:
                                             AddCategoryViewConstants.textFieldPlaceholder)
-        textField.addTarget(self, action: #selector(textFieldHasChanged), for: .editingChanged)
+        textField.addTarget(self, action: #selector(handleTextFieldChange), for: .editingChanged)
         textField.delegate = self
         return textField
     }()
@@ -71,11 +70,10 @@ final class AddCategoryView: UIView {
     }
     
     @objc
-    private func textFieldHasChanged() {
+    private func handleTextFieldChange() {
         guard let text = textField.text else { return }
-        guard let delegate = delegate else { return }
         
-        doneButton.isEnabled = delegate.textFieldDidChanged(text: text) ? true : false
+        doneButton.isEnabled = !text.isEmpty
         doneButton.backgroundColor = doneButton.isEnabled ? .ypBlack : .ypGray
     }
     

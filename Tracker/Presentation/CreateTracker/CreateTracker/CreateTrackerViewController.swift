@@ -309,13 +309,11 @@ extension CreateTrackerViewController: UICollectionViewDelegate {
         var indexItem: Int?
         switch indexPath.section {
         case 0:
-            print(indexPath)
             let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
             cell?.isCellSelected  = true
             indexItem = indexPath.item
             guard let indexItem = indexItem else { return }
             selectedEmoji = emojies[safe: indexItem]
-            print(emojies[indexItem])
             
         case 1:
             let cell = collectionView.cellForItem(at: indexPath) as? ColorCollectionViewCell

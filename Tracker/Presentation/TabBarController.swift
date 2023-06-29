@@ -36,7 +36,7 @@ final class TabBarController: UITabBarController {
         tabBar.unselectedItemTintColor = .ypGray
         tabBar.backgroundColor = .white
         
-        viewControllers = tabBarItems.compactMap({ item in
+        viewControllers = tabBarItems.map({ item in
             switch item {
             case .tracker:
                 let viewController = TrackersViewController()

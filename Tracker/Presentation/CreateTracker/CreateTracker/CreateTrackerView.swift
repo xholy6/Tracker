@@ -54,7 +54,7 @@ final class CreateTrackerView: UIView {
     private lazy var nameTrackerTextField: CustomTextField = {
         let textField = CustomTextField(frame: .zero,
                                         placeholderText: CreateTrackerViewConstants.textFieldPlaceholder)
-        textField.addTarget(self, action: #selector(textFieldHasChanged), for: .editingChanged)
+        textField.addTarget(self, action: #selector(handleTextFieldChange), for: .editingChanged)
         textField.delegate = self
         return textField
     }()
@@ -218,7 +218,7 @@ final class CreateTrackerView: UIView {
     
     //MARK: - Objc methods
     @objc
-    private func textFieldHasChanged() {
+    private func handleTextFieldChange() {
         guard let text = nameTrackerTextField.text else { return }
         guard let delegate = delegate else { return }
         if delegate.textFieldDidChanged(text: text) {

@@ -10,4 +10,25 @@ extension String {
         default: return "дней"
         }
     }
+    
+    var weekDay: WeekDay? {
+        switch self {
+        case "monday":
+            return .monday
+        case "tuesday":
+            return .tuesday
+        case "wednesday":
+            return .wednesday
+        case "thursday":
+            return .thursday
+        case "friday":
+            return .friday
+        case "saturday":
+            return .saturday
+        case "sunday":
+            return .sunday
+        default:
+            return nil
+        }
+    }
 }

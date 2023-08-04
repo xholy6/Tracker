@@ -28,8 +28,11 @@ final class CreateTrackerViewController: UIViewController {
     private var nameTracker: String?
     private var category: String?
     private var schedule: [String]?
+    private var engSchedule: [String]?
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
+    
+    private let trackerDataService = TrackersDataService.shared
 
     private var trackerView: CreateTrackerView!
     
@@ -116,27 +119,34 @@ final class CreateTrackerViewController: UIViewController {
         tableViewCellTitle[1].description = schedule?.count == 7 ? "Каждый день" : schedule?.joined(separator: ", ")
         trackerView.refreshTableView()
     }
+    
+    private func makeAnNonRegularSchedule() {
+        if engSchedule?.isEmpty ?? true && trackerType == .irregularEvent {
+            engSchedule = WeekDay.allCases.map { $0.engString }
+        }
+    }
 }
 
 //MARK: - CreateTrackerViewDelegate
 extension CreateTrackerViewController: CreateTrackerViewDelegate {
     func sendTrackerName(trackerName: String?) {
+        makeAnNonRegularSchedule()
         nameTracker = trackerName
         guard
             let nameTracker,
             let selectedEmoji,
             let selectedColor,
             let category,
-            schedule != nil
+            engSchedule != nil
         else { return }
         tracker = Tracker(id: UUID().uuidString,
                           name: nameTracker,
                           color: selectedColor,
                           emoji: selectedEmoji,
-                          schedule: schedule)
+                          schedule: engSchedule)
         guard let tracker else { return }
-        trackerCategory = TrackerCategory(title: category, trackers: [tracker])
-        delegate?.makeTrackerCategory(trackerCategory)
+        trackerDataService.addTracker(category: category, tracker: tracker)
+        delegate?.dismissViewController(self)
     }
     
     func cancelCreation() {
@@ -150,6 +160,7 @@ extension CreateTrackerViewController: CreateTrackerViewDelegate {
 
 extension CreateTrackerViewController: ChooseScheduleViewControllerDelegate {
     func getSchedule(selectedDays: [WeekDay] ) {
+        engSchedule = selectedDays.map {$0.engString}
         let daysString = selectedDays.map{$0.shortString}
         schedule = daysString
         setSchedule(schedule: schedule)
@@ -258,7 +269,7 @@ extension CreateTrackerViewController: UICollectionViewDataSource {
                 kind == UICollectionView.elementKindSectionHeader,
                 let view = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
-                    withReuseIdentifier: HeaderReusableView.identifier,
+                    withReuseIdentifier: HeaderReusableView.headerIdentifier,
                     for: indexPath) as? HeaderReusableView
             else {
                 return UICollectionReusableView()
@@ -270,7 +281,7 @@ extension CreateTrackerViewController: UICollectionViewDataSource {
                 kind == UICollectionView.elementKindSectionHeader,
                 let view = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
-                    withReuseIdentifier: HeaderReusableView.identifier,
+                    withReuseIdentifier: HeaderReusableView.headerIdentifier,
                     for: indexPath) as? HeaderReusableView
             else {
                 return UICollectionReusableView()

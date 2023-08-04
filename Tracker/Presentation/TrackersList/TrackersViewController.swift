@@ -173,11 +173,11 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
 extension TrackersViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return trackersDataService.numberOfSections
+        numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        trackersDataService.numberOfItemsInSection(section)
+        numberOfItemsInSection(section)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -204,7 +204,7 @@ extension TrackersViewController: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
         
-        guard let title = trackersDataService.categoryTitle(at: indexPath) else { view.config(title: "")
+        guard let title = categoryTitle(at: indexPath) else { view.config(title: "")
             return view
         }
         view.config(title: title)

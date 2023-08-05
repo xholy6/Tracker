@@ -76,7 +76,7 @@ extension TrackerRecordDataStore {
             do {
                 try context.save()
             } catch let error as NSError {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                assertionFailure("Unresolved error \(error), \(error.userInfo)")
             }
         }
     }

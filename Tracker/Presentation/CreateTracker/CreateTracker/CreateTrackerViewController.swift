@@ -32,6 +32,10 @@ final class CreateTrackerViewController: UIViewController {
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
     
+    private var emojiSelectedItem: Int?
+    private var colorSelectedItem: Int?
+    private var selectedItem: IndexPath?
+    
     private let trackerDataService = TrackersDataService.shared
 
     private var trackerView: CreateTrackerView!
@@ -299,12 +303,17 @@ extension CreateTrackerViewController: UICollectionViewDataSource {
 extension CreateTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let bounds = trackerView.bounds
-        let width = (bounds.width - (16 * 2)) / 6
+        let leftInset: CGFloat = 16
+        let rightInset: CGFloat = 16
+        let horizontalCellSpacing: CGFloat = 10
+        let cellsPerRow: CGFloat = 6
+        let cellsHorizontalSpace = leftInset + rightInset + horizontalCellSpacing * cellsPerRow
+        let width = (bounds.width - cellsHorizontalSpace) / cellsPerRow
         return CGSize(width: width, height: width)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        0
+        10
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -316,24 +325,46 @@ extension CreateTrackerViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension CreateTrackerViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        selectedItem = indexPath
+        return true
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        var indexItem: Int?
         switch indexPath.section {
         case 0:
             let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
             cell?.isCellSelected  = true
-            indexItem = indexPath.item
-            guard let indexItem = indexItem else { return }
-            selectedEmoji = emojies[safe: indexItem]
+            emojiSelectedItem = indexPath.item
+            guard let emojiSelectedItem else { return }
+            selectedEmoji = emojies[safe: emojiSelectedItem]
             
         case 1:
             let cell = collectionView.cellForItem(at: indexPath) as? ColorCollectionViewCell
             cell?.isCellSelected  = true
-            indexItem = indexPath.item
-            guard let indexItem else { return }
-            selectedColor = colors[safe: indexItem]
+            colorSelectedItem = indexPath.item
+            guard let colorSelectedItem else { return }
+            selectedColor = colors[safe: colorSelectedItem]
         default:
             break
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        
+        guard let section = selectedItem?.section else { return }
+        switch section {
+        case 0:
+            guard let item = emojiSelectedItem,
+                  let cell = collectionView.cellForItem(at: IndexPath(item: item, section: section)) as? EmojiCollectionViewCell
+            else { return }
+            cell.isCellSelected = false
+        case 1:
+            guard let item = colorSelectedItem,
+                  let cell = collectionView.cellForItem(at: IndexPath(item: item, section: section)) as? ColorCollectionViewCell
+            else { return }
+            cell.isCellSelected = false
+        default: break
         }
     }
 }

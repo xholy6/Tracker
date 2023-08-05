@@ -31,6 +31,7 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
     }
     
     private func highlightSelectedCell() {
+        
         contentView.backgroundColor = .ypLightGray
     }
     
@@ -39,6 +40,8 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
     }
     private func setupView() {
         backgroundColor = .clear
+        contentView.layer.cornerRadius = 16
+        contentView.layer.masksToBounds = true
         contentView.backgroundColor = .clear
         contentView.addSubview(emojiLabel)
     }

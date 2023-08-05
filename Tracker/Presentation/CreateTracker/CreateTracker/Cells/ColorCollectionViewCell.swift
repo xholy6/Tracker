@@ -32,6 +32,7 @@ final class ColorCollectionViewCell: UICollectionViewCell {
     
     private func showBorderLine() {
         layer.borderWidth = 3
+        layer.cornerRadius = 12
         layer.borderColor = colorView.backgroundColor?.withAlphaComponent(0.3).cgColor
     }
     
@@ -47,7 +48,7 @@ final class ColorCollectionViewCell: UICollectionViewCell {
     }
     
     private func activateConstraints() {
-        let edge: CGFloat = 5
+        let edge: CGFloat = 6
         NSLayoutConstraint.activate([
             colorView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: edge),
             colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: edge),

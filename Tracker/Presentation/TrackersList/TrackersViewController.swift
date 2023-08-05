@@ -68,6 +68,8 @@ final class TrackersViewController: UIViewController {
             HeaderReusableView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: HeaderReusableView.headerIdentifier)
+        collectionView.alwaysBounceVertical = true
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.delegate = self
         collectionView.dataSource = self
         return collectionView
@@ -94,8 +96,15 @@ final class TrackersViewController: UIViewController {
     
     //MARK: - Private functions
     private func requestTracker(for day: Date) {
-        trackersDataService.fetchTrackers(weekDay: day.stringDate)
+        let count = trackersDataService.fetchTrackers(weekDay: day.stringDate)
+        fetchCompletedTrackersForCurrentDate()
+        shouldShowPlugview(trackers: count, isSearching: false)
         collectionView.reloadData()
+    }
+    
+    private func fetchCompletedTrackersForCurrentDate() {
+        let completedTrackersForCurrentDate = trackersDataService.fetchCompletedRecords(date: currentDate)
+        self.completedTrackers = Set(completedTrackersForCurrentDate)
     }
     
     private func shouldShowPlugview(trackers count: Int, isSearching: Bool) {
@@ -187,9 +196,10 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         guard let tracker = tracker(at: indexPath) else { return UICollectionViewCell()}
         let completedDayCount = trackersDataService.completedTimesCount(trackerId: tracker.id)
-        let completed = completedDayCount > 0 ? true : false
-        cell.configCell(tracker: tracker, completedDaysCount: completedDayCount, completed: completed)
-        cell.enabledCheckTrackerButton(enabled: today < currentDate)
+        let isCompleted = completedTrackers
+            .first(where: { $0.doneId == tracker.id && $0.date.isDayEqualTo(currentDate) }) != nil
+        cell.configCell(tracker: tracker, completedDaysCount: completedDayCount, completed: isCompleted)
+        cell.enabledCheckTrackerButton(enabled: today == datePicker.date)
         cell.delegate = self
         return cell
     }
@@ -243,14 +253,13 @@ extension TrackersViewController: UISearchResultsUpdating {
 extension TrackersViewController: UISearchControllerDelegate {
     func didDismissSearchController(_ searchController: UISearchController) {
         requestTracker(for: currentDate)
-        shouldShowPlugview(trackers: collectionView.numberOfItems(inSection: 0), isSearching: false)
     }
 }
 
 extension TrackersViewController: ChooseTypeTrackerViewControllerDelegate {
     func dimissVC(_ viewcontroller: UIViewController) {
         dismiss(animated: true)
-        collectionView.reloadData()
+        requestTracker(for: datePicker.date)
     }
 }
 //MARK: - DataServiceCollectionProtocol

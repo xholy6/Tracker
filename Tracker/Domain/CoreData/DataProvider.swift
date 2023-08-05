@@ -25,7 +25,7 @@ protocol TrackersDataProviderCompletingProtocol {
 protocol TrackersDataProviderFetchingProtocol {
     var numberOfSections: Int { get }
     func numberOfItemsInSection(_ section: Int) -> Int
-    func fetchTrackers(currentDay: String)
+    func fetchTrackers(currentDay: String) -> Int
     func fetchTrackers(titleSearchString: String, currentDay: String) -> Int
     func fetchCompletedRecords(date: Date) -> [TrackerRecordCoreData]
     func completedTimesCount(trackerId: String) -> Int
@@ -119,11 +119,11 @@ extension DataProvider: TrackersDataProviderFetchingProtocol {
         return fetchingResultController.sections?[section].numberOfObjects ?? 0
     }
     
-    func fetchTrackers(currentDay: String) {
+    func fetchTrackers(currentDay: String) -> Int {
         fetchingResultController.fetchRequest.predicate = NSPredicate(
             format: "%K CONTAINS[cd] %@",
             #keyPath(TrackerCoreData.schedule), currentDay)
-        try? fetchingResultController.performFetch()
+        return performFetchAndCountObjects()
     }
     
     func fetchTrackers(titleSearchString: String, currentDay: String) -> Int {
@@ -131,6 +131,10 @@ extension DataProvider: TrackersDataProviderFetchingProtocol {
             format: "%K CONTAINS[cd] %@ AND %K CONTAINS[cd] %@",
             #keyPath(TrackerCoreData.name), titleSearchString,
             #keyPath(TrackerCoreData.schedule), currentDay)
+        return performFetchAndCountObjects()
+    }
+    
+    private func performFetchAndCountObjects() -> Int {
         do {
                try fetchingResultController.performFetch()
                if let fetchedObjects = fetchingResultController.fetchedObjects {

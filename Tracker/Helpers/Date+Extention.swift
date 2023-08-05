@@ -20,5 +20,9 @@ extension Date {
         dateFormatter.dateFormat = "EEEE"
         return dateFormatter.string(from: self)
     }
+    
+    func isDayEqualTo(_ otherDate: Date) -> Bool {
+        Calendar.current.isDate(self, equalTo: otherDate, toGranularity: .day)
+    }
 }
 

@@ -26,7 +26,7 @@ protocol TrackersDataProviderFetchingProtocol {
     var numberOfSections: Int { get }
     func numberOfItemsInSection(_ section: Int) -> Int
     func fetchTrackers(currentDay: String)
-    func fetchTrackers(titleSearchString: String, currentDay: String)
+    func fetchTrackers(titleSearchString: String, currentDay: String) -> Int
     func fetchCompletedRecords(date: Date) -> [TrackerRecordCoreData]
     func completedTimesCount(trackerId: String) -> Int
     func tracker(at indexPath: IndexPath) -> TrackerCoreData?
@@ -126,12 +126,22 @@ extension DataProvider: TrackersDataProviderFetchingProtocol {
         try? fetchingResultController.performFetch()
     }
     
-    func fetchTrackers(titleSearchString: String, currentDay: String) {
+    func fetchTrackers(titleSearchString: String, currentDay: String) -> Int {
         fetchingResultController.fetchRequest.predicate = NSPredicate(
             format: "%K CONTAINS[cd] %@ AND %K CONTAINS[cd] %@",
             #keyPath(TrackerCoreData.name), titleSearchString,
             #keyPath(TrackerCoreData.schedule), currentDay)
-        try? fetchingResultController.performFetch()
+        do {
+               try fetchingResultController.performFetch()
+               if let fetchedObjects = fetchingResultController.fetchedObjects {
+                   return fetchedObjects.count
+               } else {
+                   return 0
+               }
+           } catch {
+               print("Error fetching data: \(error.localizedDescription)")
+               return 0
+           }
     }
     
     func fetchCompletedRecords(date: Date) -> [TrackerRecordCoreData] {

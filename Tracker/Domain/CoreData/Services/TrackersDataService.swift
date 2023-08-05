@@ -25,7 +25,7 @@ protocol TrackersServiceCompletingProtocol {
 
 protocol TrackersServiceFetchingProtocol {
     func fetchTrackers(weekDay: String)
-    func fetchTrackers(titleSearchString: String, currentWeekDay: String)
+    func fetchTrackers(titleSearchString: String, currentWeekDay: String) -> Int
     func fetchCompletedRecords(date: Date) -> [TrackerRecord]
     func completedTimesCount(trackerId: String) -> Int
     
@@ -79,8 +79,8 @@ extension TrackersDataService: TrackersServiceFetchingProtocol {
         trackersDataProvider?.fetchTrackers(currentDay: weekDay)
     }
     
-    func fetchTrackers(titleSearchString: String, currentWeekDay: String) {
-        trackersDataProvider?.fetchTrackers(titleSearchString: titleSearchString, currentDay: currentWeekDay)
+    func fetchTrackers(titleSearchString: String, currentWeekDay: String) -> Int {
+        trackersDataProvider?.fetchTrackers(titleSearchString: titleSearchString, currentDay: currentWeekDay) ?? 0
     }
     
     func fetchCompletedRecords(date: Date) -> [TrackerRecord] {

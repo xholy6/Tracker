@@ -19,7 +19,6 @@ final class TrackersViewController: UIViewController {
     private var completedTrackers: Set<TrackerRecord> = []
     
     private let trackersDataService = TrackersDataService.shared
-    
     private let searchController = UISearchController(searchResultsController: nil)
     
     private var currentDate: Date {
@@ -232,10 +231,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         if let text = searchController.searchBar.text {
-            trackersDataService.fetchTrackers(titleSearchString: text,
+            let count = trackersDataService.fetchTrackers(titleSearchString: text,
                                               currentWeekDay: currentDate.stringDate)
             collectionView.reloadData()
-            shouldShowPlugview(trackers: collectionView.numberOfItems(inSection: 0), isSearching: true)
+            shouldShowPlugview(trackers: count, isSearching: true)
         }
     }
 }

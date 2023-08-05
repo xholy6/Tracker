@@ -199,7 +199,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         let isCompleted = completedTrackers
             .first(where: { $0.doneId == tracker.id && $0.date.isDayEqualTo(currentDate) }) != nil
         cell.configCell(tracker: tracker, completedDaysCount: completedDayCount, completed: isCompleted)
-        cell.enabledCheckTrackerButton(enabled: today == datePicker.date)
+        cell.enabledCheckTrackerButton(enabled: today > datePicker.date)
         cell.delegate = self
         return cell
     }

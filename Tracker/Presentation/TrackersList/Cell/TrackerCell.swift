@@ -113,7 +113,7 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     func enabledCheckTrackerButton(enabled: Bool) {
-        completeButton.isEnabled = enabled ? false : true
+        completeButton.isEnabled = enabled ? true : false
     }
     
     private func getButtonImage(_ check: Bool) -> UIImage? {

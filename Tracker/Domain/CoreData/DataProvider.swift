@@ -61,7 +61,7 @@ final class DataProvider: NSObject {
         let fetchController = NSFetchedResultsController(
             fetchRequest: request,
             managedObjectContext: context,
-            sectionNameKeyPath: nil,
+            sectionNameKeyPath: #keyPath(TrackerCoreData.category.title),
             cacheName: nil)
         fetchController.delegate = self
         try? fetchController.performFetch()

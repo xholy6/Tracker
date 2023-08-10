@@ -2,7 +2,7 @@ import UIKit
 
 final class HeaderReusableView: UICollectionReusableView {
     
-    static let identifier = "Header"
+    static let headerIdentifier = "HeaderIdentifier"
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()

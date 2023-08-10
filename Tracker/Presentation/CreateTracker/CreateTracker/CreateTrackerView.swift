@@ -88,7 +88,7 @@ final class CreateTrackerView: UIView {
                                 forCellWithReuseIdentifier: EmojiCollectionViewCell.identifier)
         collectionView.register(HeaderReusableView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: HeaderReusableView.identifier)
+                                withReuseIdentifier: HeaderReusableView.headerIdentifier)
         collectionView.register(ColorCollectionViewCell.self,
                                 forCellWithReuseIdentifier: ColorCollectionViewCell.identifier)
         return collectionView

@@ -7,7 +7,6 @@ enum TrackerType {
 
 protocol ChooseTypeTrackerViewControllerDelegate: AnyObject {
     func dimissVC(_ viewcontroller: UIViewController)
-    func createTrackerCategory(_ trackerCategory: TrackerCategory?)
 }
 
 final class ChooseTypeTrackerViewController: UIViewController {
@@ -60,7 +59,6 @@ extension ChooseTypeTrackerViewController: CreateTrackerViewControllerDelegate {
     }
     
     func makeTrackerCategory(_ trackerCategory: TrackerCategory?) {
-        delegate?.createTrackerCategory(trackerCategory)
     }
     
 }

@@ -28,8 +28,15 @@ final class CreateTrackerViewController: UIViewController {
     private var nameTracker: String?
     private var category: String?
     private var schedule: [String]?
+    private var engSchedule: [String]?
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
+    
+    private var emojiSelectedItem: Int?
+    private var colorSelectedItem: Int?
+    private var selectedItem: IndexPath?
+    
+    private let trackerDataService = TrackersDataService.shared
 
     private var trackerView: CreateTrackerView!
     
@@ -116,27 +123,34 @@ final class CreateTrackerViewController: UIViewController {
         tableViewCellTitle[1].description = schedule?.count == 7 ? "Каждый день" : schedule?.joined(separator: ", ")
         trackerView.refreshTableView()
     }
+    
+    private func makeAnNonRegularSchedule() {
+        if engSchedule?.isEmpty ?? true && trackerType == .irregularEvent {
+            engSchedule = WeekDay.allCases.map { $0.engString }
+        }
+    }
 }
 
 //MARK: - CreateTrackerViewDelegate
 extension CreateTrackerViewController: CreateTrackerViewDelegate {
     func sendTrackerName(trackerName: String?) {
+        makeAnNonRegularSchedule()
         nameTracker = trackerName
         guard
             let nameTracker,
             let selectedEmoji,
             let selectedColor,
             let category,
-            schedule != nil
+            engSchedule != nil
         else { return }
         tracker = Tracker(id: UUID().uuidString,
                           name: nameTracker,
                           color: selectedColor,
                           emoji: selectedEmoji,
-                          schedule: schedule)
+                          schedule: engSchedule)
         guard let tracker else { return }
-        trackerCategory = TrackerCategory(title: category, trackers: [tracker])
-        delegate?.makeTrackerCategory(trackerCategory)
+        trackerDataService.addTracker(category: category, tracker: tracker)
+        delegate?.dismissViewController(self)
     }
     
     func cancelCreation() {
@@ -150,6 +164,7 @@ extension CreateTrackerViewController: CreateTrackerViewDelegate {
 
 extension CreateTrackerViewController: ChooseScheduleViewControllerDelegate {
     func getSchedule(selectedDays: [WeekDay] ) {
+        engSchedule = selectedDays.map {$0.engString}
         let daysString = selectedDays.map{$0.shortString}
         schedule = daysString
         setSchedule(schedule: schedule)
@@ -258,7 +273,7 @@ extension CreateTrackerViewController: UICollectionViewDataSource {
                 kind == UICollectionView.elementKindSectionHeader,
                 let view = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
-                    withReuseIdentifier: HeaderReusableView.identifier,
+                    withReuseIdentifier: HeaderReusableView.headerIdentifier,
                     for: indexPath) as? HeaderReusableView
             else {
                 return UICollectionReusableView()
@@ -270,7 +285,7 @@ extension CreateTrackerViewController: UICollectionViewDataSource {
                 kind == UICollectionView.elementKindSectionHeader,
                 let view = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
-                    withReuseIdentifier: HeaderReusableView.identifier,
+                    withReuseIdentifier: HeaderReusableView.headerIdentifier,
                     for: indexPath) as? HeaderReusableView
             else {
                 return UICollectionReusableView()
@@ -288,12 +303,17 @@ extension CreateTrackerViewController: UICollectionViewDataSource {
 extension CreateTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let bounds = trackerView.bounds
-        let width = (bounds.width - (16 * 2)) / 6
+        let leftInset: CGFloat = 16
+        let rightInset: CGFloat = 16
+        let horizontalCellSpacing: CGFloat = 10
+        let cellsPerRow: CGFloat = 6
+        let cellsHorizontalSpace = leftInset + rightInset + horizontalCellSpacing * cellsPerRow
+        let width = (bounds.width - cellsHorizontalSpace) / cellsPerRow
         return CGSize(width: width, height: width)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        0
+        10
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -305,24 +325,46 @@ extension CreateTrackerViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension CreateTrackerViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        selectedItem = indexPath
+        return true
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        var indexItem: Int?
         switch indexPath.section {
         case 0:
             let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
             cell?.isCellSelected  = true
-            indexItem = indexPath.item
-            guard let indexItem = indexItem else { return }
-            selectedEmoji = emojies[safe: indexItem]
+            emojiSelectedItem = indexPath.item
+            guard let emojiSelectedItem else { return }
+            selectedEmoji = emojies[safe: emojiSelectedItem]
             
         case 1:
             let cell = collectionView.cellForItem(at: indexPath) as? ColorCollectionViewCell
             cell?.isCellSelected  = true
-            indexItem = indexPath.item
-            guard let indexItem else { return }
-            selectedColor = colors[safe: indexItem]
+            colorSelectedItem = indexPath.item
+            guard let colorSelectedItem else { return }
+            selectedColor = colors[safe: colorSelectedItem]
         default:
             break
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        
+        guard let section = selectedItem?.section else { return }
+        switch section {
+        case 0:
+            guard let item = emojiSelectedItem,
+                  let cell = collectionView.cellForItem(at: IndexPath(item: item, section: section)) as? EmojiCollectionViewCell
+            else { return }
+            cell.isCellSelected = false
+        case 1:
+            guard let item = colorSelectedItem,
+                  let cell = collectionView.cellForItem(at: IndexPath(item: item, section: section)) as? ColorCollectionViewCell
+            else { return }
+            cell.isCellSelected = false
+        default: break
         }
     }
 }

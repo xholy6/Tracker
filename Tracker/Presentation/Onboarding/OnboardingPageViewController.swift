@@ -26,10 +26,10 @@ final class OnboardingPageViewController: UIPageViewController {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
-
-        pageControl.currentPageIndicatorTintColor = .ypGray
-        pageControl.pageIndicatorTintColor = .ypBlack
-
+        
+        pageControl.currentPageIndicatorTintColor = .ypBlack
+        pageControl.pageIndicatorTintColor = .ypGray
+        
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
     }()
@@ -67,7 +67,16 @@ final class OnboardingPageViewController: UIPageViewController {
     
     @objc
     private func leaveButtonTapped() {
-        
+        showMainViewController()
+    }
+    
+    private func showMainViewController() {
+        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid configuration")}
+        let tabBarVC = TabBarController()
+        UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            window.rootViewController = tabBarVC
+        }, completion: nil)
+        UserDefaults.standard.set(true, forKey: "isFirstAppLaunch")
     }
     
     private func activateConstraints() {
@@ -97,13 +106,13 @@ extension OnboardingPageViewController: UIPageViewControllerDataSource {
         guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
             return nil
         }
-
+        
         let previousIndex = viewControllerIndex - 1
-
+        
         guard previousIndex >= 0 else {
             return nil
         }
-
+        
         return pages[previousIndex]
     }
     
@@ -111,23 +120,23 @@ extension OnboardingPageViewController: UIPageViewControllerDataSource {
         guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
             return nil
         }
-
+        
         let nextIndex = viewControllerIndex + 1
-
+        
         guard nextIndex < pages.count else {
             return nil
         }
-
+        
         return pages[nextIndex]
     }
-
+    
     
     
 }
 
 extension OnboardingPageViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-
+        
         if let currentViewController = pageViewController.viewControllers?.first,
            let currentIndex = pages.firstIndex(of: currentViewController) {
             pageControl.currentPage = currentIndex

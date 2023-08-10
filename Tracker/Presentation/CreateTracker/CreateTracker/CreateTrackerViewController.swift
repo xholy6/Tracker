@@ -89,6 +89,7 @@ final class CreateTrackerViewController: UIViewController {
         }
         
     }
+    
     //MARK: - Private methods
     private func setupView() {
         view.addSubview(trackerView)

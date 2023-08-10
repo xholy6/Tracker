@@ -4,12 +4,28 @@ final class CategoriesCell: UITableViewCell {
     
     static let identifier = "categoriesCell"
     
+    var isSelectedCell: Bool = true {
+        didSet {
+            let r = self.isSelectedCell
+            checkMarkImageView.isHidden = r
+        }
+    }
+    
     private lazy var categoryNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = ""
         label.font = UIFont.ypRegular17
         return label
+    }()
+    
+    private lazy var checkMarkImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "checkMark")
+        imageView.backgroundColor = .ypLightGray
+        imageView.isHidden = true
+        return imageView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -22,10 +38,14 @@ final class CategoriesCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+//    private func shouldShowCheckMark() -> Bool {
+//
+//    }
+    
     private func setupView() {
         backgroundColor = .clear
         contentView.backgroundColor = .ypLightGray
-        contentView.addSubview(categoryNameLabel)
+        contentView.addSubViews(categoryNameLabel, checkMarkImageView)
     }
     
     private func activateConstraints() {
@@ -33,6 +53,11 @@ final class CategoriesCell: UITableViewCell {
             categoryNameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             categoryNameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             categoryNameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.75),
+            
+            checkMarkImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            checkMarkImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            checkMarkImageView.heightAnchor.constraint(equalToConstant: 24),
+            checkMarkImageView.widthAnchor.constraint(equalToConstant: 24),
         ])
     }
     

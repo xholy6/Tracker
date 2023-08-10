@@ -27,6 +27,8 @@ final class CategoriesVC: UIViewController {
     
     var viewModelDelegate: CategoriesViewModelDelegate?
     
+    
+    private var lastSelectedIndexPath: IndexPath?
     //MARK: - UI objects
     private lazy var plugView: PlugView = {
         let image = UIImage(named: "plugStar")
@@ -62,6 +64,7 @@ final class CategoriesVC: UIViewController {
         super.viewDidLoad()
         viewModel = CategoriesViewModel()
         viewModel?.delegate = viewModelDelegate
+        viewModel?.router.viewController = self
         view.backgroundColor = .white
         tableView.dataSource = self
         tableView.delegate = self
@@ -74,8 +77,7 @@ final class CategoriesVC: UIViewController {
     //MARK: - Private methods
     @objc
     private func addCategoryButtonTapped() {
-        let nvc = showAddCategoryView(editingType: .add)
-        present(nvc, animated: true)
+        viewModel?.presentNextVC(with: .add, nil)
     }
     
     private func showAddCategoryView(editingType: EditingType)  -> UINavigationController {
@@ -109,6 +111,7 @@ final class CategoriesVC: UIViewController {
     }
     
     private func bind() {
+        
         viewModel?.$categories.bind{ [weak self] _ in
             self?.tableView.reloadData()
             self?.showPlugView()
@@ -169,15 +172,25 @@ extension CategoriesVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let number = indexPath.row
         viewModel?.shouldSendSelectedCategory(categoryNumber: number)
-        tableView.deselectRow(at: indexPath, animated: true)
         
-        guard let cell = tableView.cellForRow(at: indexPath) else {
+        guard let cell = tableView.cellForRow(at: indexPath) as? CategoriesCell else {
             return
         }
         
-        cell.accessoryType = (cell.accessoryType == .checkmark) ? .none : .checkmark
+        if let lastSelectedIndexPath = lastSelectedIndexPath {
+            guard let oldCell = tableView.cellForRow(at: lastSelectedIndexPath) as? CategoriesCell else { return }
+            tableView.deselectRow(at: lastSelectedIndexPath, animated: true)
+            oldCell.isSelectedCell.toggle()
+        }
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+        cell.isSelectedCell.toggle()
+        lastSelectedIndexPath = indexPath
         dismiss(animated: true)
+        
+        
     }
+    
 }
 
 //MARK: - UIContextMenuInteractionDelegate
@@ -186,13 +199,14 @@ extension CategoriesVC: UIContextMenuInteractionDelegate {
         
         guard let cell = interaction.view as? CategoriesCell else { return nil }
         guard let indexPath = tableView.indexPath(for: cell) else { return nil }
+        cell.isSelectedCell.toggle()
         
         let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-            let action1 = UIAction(title: "Редактировать" ){ [weak self] _ in
+            let action1 = UIAction(title: "Редактировать") { [weak self] _ in
                 guard let self else { return }
-                let nvc = self.showAddCategoryView(editingType: .edit)
-                self.present(nvc, animated: true)
+                self.viewModel?.presentNextVC(with: .edit, indexPath.row)
             }
+            
             
             let action2 = UIAction(title: "Удалить") { [weak self] _ in
                 guard let self else { return }
@@ -204,6 +218,4 @@ extension CategoriesVC: UIContextMenuInteractionDelegate {
         
         return configuration
     }
-    
-    
 }

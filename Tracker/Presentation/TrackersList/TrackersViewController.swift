@@ -93,7 +93,6 @@ final class TrackersViewController: UIViewController {
         setupSearchController()
         requestTracker(for: today)
     }
-    
     //MARK: - Private functions
     private func requestTracker(for day: Date) {
         let count = trackersDataService.fetchTrackers(weekDay: day.stringDate)

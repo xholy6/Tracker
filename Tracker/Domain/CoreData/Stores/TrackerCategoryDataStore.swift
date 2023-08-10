@@ -52,6 +52,14 @@ extension TrackerCategoryDataStore {
         
     }
     
+    func updateCategoryTitleAndRelationships(oldCategoryTitle: String, newCategoryTitle: String) {
+        guard let oldCategory = getNeededCategory(searching: oldCategoryTitle) else { return }
+        context.performAndWait {
+            oldCategory.title = newCategoryTitle
+        }
+        saveContext()
+    }
+    
     private func saveContext() {
         if context.hasChanges {
             do {

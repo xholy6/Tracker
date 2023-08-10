@@ -5,7 +5,7 @@
 //  Created by D on 10.08.2023.
 //
 
-import Foundation
+import UIKit
 
 protocol CategoriesViewModelDelegate: AnyObject {
     func getCategory(with: String)
@@ -16,9 +16,12 @@ final class CategoriesViewModel {
     @Observable
     private(set) var categories: [String]?
     
+    private(set) var router = CategoriesRouter()
+    
     private let trackersDataService = TrackersDataService.shared
     
     weak var delegate: CategoriesViewModelDelegate?
+    
     
     init() {
         fetchCategories()
@@ -41,6 +44,18 @@ final class CategoriesViewModel {
         fetchCategories()
     }
     
+    func presentNextVC(with type: EditingType, _ index: Int?) {
+        guard
+            let index else { router.navigateToAddCategory(editingType: type,
+                                         viewModel: self,
+                                         word: "")
+            return
+        }
+        router.navigateToAddCategory(editingType: type,
+                                     viewModel: self,
+                                     word: categories?[index] ?? "")
+    }
+    
     private func fetchCategories() {
         categories = trackersDataService.fetchAllCategoires()
     }
@@ -53,5 +68,8 @@ extension CategoriesViewModel: AddCategoryViewControllerDelegate {
             categories?.append(category)
         }
     }
-
+    
+    func reloadData() {
+        fetchCategories()
+    }
 }

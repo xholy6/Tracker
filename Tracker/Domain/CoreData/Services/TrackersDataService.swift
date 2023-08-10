@@ -14,9 +14,10 @@ protocol TrackersServiceDataSourceProtocol {
     func categoryTitle(at indexPath: IndexPath) -> String?
 }
 
-protocol TrackersServiceAddingProtocol {
+protocol TrackersServiceAddingAndUpdatingProtocol {
     func addTracker(category: String, tracker: Tracker)
     func addCategory(category: String)
+    func updateCategory(oldTitle: String, newTitle: String)
 }
 
 protocol TrackersServiceDeletingProtocol {
@@ -43,7 +44,7 @@ TrackersServiceFetchingProtocol
 & TrackersServiceCompletingProtocol
 
 typealias TrackersServiceProtocol =
-TrackersServiceAddingProtocol
+TrackersServiceAddingAndUpdatingProtocol
 & TrackersServiceCompletingProtocol
 & TrackersServiceFetchingProtocol
 & TrackersServiceDataSourceProtocol
@@ -121,7 +122,7 @@ extension TrackersDataService: TrackersServiceCompletingProtocol {
 }
 
 // MARK: - TrackersServiceAddingProtocol
-extension TrackersDataService: TrackersServiceAddingProtocol {
+extension TrackersDataService: TrackersServiceAddingAndUpdatingProtocol {
     
     func addTracker(category: String, tracker: Tracker) {
         try? trackersDataProvider?.add(tracker: tracker, for: category)
@@ -129,6 +130,10 @@ extension TrackersDataService: TrackersServiceAddingProtocol {
     
     func addCategory(category: String) {
         try? trackersDataProvider?.addCategory(category)
+    }
+    
+    func updateCategory(oldTitle: String, newTitle: String) {
+        trackersDataProvider?.updateCategoryTitle(oldCategoryTitle: oldTitle, newCategoryTitle: newTitle)
     }
 }
 

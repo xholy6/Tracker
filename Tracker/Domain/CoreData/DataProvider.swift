@@ -125,7 +125,7 @@ extension DataProvider: TrackersDataProviderFetchingProtocol {
     }
     
     func numberOfItemsInSection(_ section: Int) -> Int {
-        return fetchingResultController.sections?[section].numberOfObjects ?? 0
+        fetchingResultController.sections?[section].numberOfObjects ?? 0
     }
     
     func fetchTrackers(currentDay: String) -> Int {
@@ -149,6 +149,12 @@ extension DataProvider: TrackersDataProviderFetchingProtocol {
         guard let categoriesCoreData else { return [String]() }
         let categoriesString = categoriesCoreData.compactMap { $0.title }
         return categoriesString
+    }
+    
+    func updateCategoryTitle(oldCategoryTitle: String, newCategoryTitle: String) {
+        trackerCategoryDataStore.updateCategoryTitleAndRelationships(
+            oldCategoryTitle: oldCategoryTitle,
+            newCategoryTitle: newCategoryTitle)
     }
     
     private func performFetchAndCountObjects() -> Int {

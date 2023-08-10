@@ -29,8 +29,6 @@
 		585575AA2A42E28F00940633 /* CreateTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585575752A42E28E00940633 /* CreateTrackerViewController.swift */; };
 		585575AB2A42E28F00940633 /* ScheduleAndCategoryTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585575772A42E28E00940633 /* ScheduleAndCategoryTableViewModel.swift */; };
 		585575AC2A42E28F00940633 /* CreateTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585575782A42E28E00940633 /* CreateTrackerView.swift */; };
-		585575AD2A42E28F00940633 /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5855757A2A42E28E00940633 /* CategoriesView.swift */; };
-		585575AE2A42E28F00940633 /* CategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5855757B2A42E28E00940633 /* CategoriesViewController.swift */; };
 		585575AF2A42E28F00940633 /* CategoriesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5855757D2A42E28E00940633 /* CategoriesCell.swift */; };
 		585575B02A42E28F00940633 /* AddCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5855757F2A42E28E00940633 /* AddCategoryView.swift */; };
 		585575B12A42E28F00940633 /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585575802A42E28E00940633 /* AddCategoryViewController.swift */; };
@@ -60,6 +58,7 @@
 		5863C33A2A84CDC000F2DC6D /* CategoriesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5863C3392A84CDC000F2DC6D /* CategoriesVC.swift */; };
 		5863C33C2A84CDCA00F2DC6D /* CategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5863C33B2A84CDCA00F2DC6D /* CategoriesViewModel.swift */; };
 		5863C33E2A84CDD200F2DC6D /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5863C33D2A84CDD200F2DC6D /* Observable.swift */; };
+		5863C3432A85758F00F2DC6D /* CategoriesRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5863C3422A85758F00F2DC6D /* CategoriesRouter.swift */; };
 		58BDF7DD2A7C5AB600590A6C /* TrackersDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BDF7DC2A7C5AB600590A6C /* TrackersDataService.swift */; };
 		58E370412A7FB21700C87019 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E370402A7FB21700C87019 /* OnboardingViewController.swift */; };
 		58E370482A7FE9A000C87019 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E370472A7FE9A000C87019 /* OnboardingPageViewController.swift */; };
@@ -87,8 +86,6 @@
 		585575752A42E28E00940633 /* CreateTrackerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateTrackerViewController.swift; sourceTree = "<group>"; };
 		585575772A42E28E00940633 /* ScheduleAndCategoryTableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleAndCategoryTableViewModel.swift; sourceTree = "<group>"; };
 		585575782A42E28E00940633 /* CreateTrackerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateTrackerView.swift; sourceTree = "<group>"; };
-		5855757A2A42E28E00940633 /* CategoriesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
-		5855757B2A42E28E00940633 /* CategoriesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoriesViewController.swift; sourceTree = "<group>"; };
 		5855757D2A42E28E00940633 /* CategoriesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoriesCell.swift; sourceTree = "<group>"; };
 		5855757F2A42E28E00940633 /* AddCategoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCategoryView.swift; sourceTree = "<group>"; };
 		585575802A42E28E00940633 /* AddCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
@@ -118,6 +115,7 @@
 		5863C3392A84CDC000F2DC6D /* CategoriesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesVC.swift; sourceTree = "<group>"; };
 		5863C33B2A84CDCA00F2DC6D /* CategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewModel.swift; sourceTree = "<group>"; };
 		5863C33D2A84CDD200F2DC6D /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
+		5863C3422A85758F00F2DC6D /* CategoriesRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesRouter.swift; sourceTree = "<group>"; };
 		58BDF7DC2A7C5AB600590A6C /* TrackersDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersDataService.swift; sourceTree = "<group>"; };
 		58BDF80B2A7CD89A00590A6C /* TrackerCategoryCoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryCoreData.swift; sourceTree = "<group>"; };
 		58BDF80C2A7CD89A00590A6C /* TrackerCoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCoreData.swift; sourceTree = "<group>"; };
@@ -298,13 +296,12 @@
 		585575792A42E28E00940633 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				5855757A2A42E28E00940633 /* CategoriesView.swift */,
-				5855757B2A42E28E00940633 /* CategoriesViewController.swift */,
 				5855757C2A42E28E00940633 /* Cell */,
 				5855757E2A42E28E00940633 /* AddCategory */,
 				5863C3392A84CDC000F2DC6D /* CategoriesVC.swift */,
 				5863C33B2A84CDCA00F2DC6D /* CategoriesViewModel.swift */,
 				5863C33D2A84CDD200F2DC6D /* Observable.swift */,
+				5863C3422A85758F00F2DC6D /* CategoriesRouter.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -520,6 +517,7 @@
 				585575A62A42E28F00940633 /* ChooseScheduleViewController.swift in Sources */,
 				58E370482A7FE9A000C87019 /* OnboardingPageViewController.swift in Sources */,
 				585575B32A42E28F00940633 /* ChooseTrackerTypeViewController.swift in Sources */,
+				5863C3432A85758F00F2DC6D /* CategoriesRouter.swift in Sources */,
 				585575C52A42E28F00940633 /* HeaderReusableView.swift in Sources */,
 				585575C32A42E28F00940633 /* Collection+Extention.swift in Sources */,
 				582B104E2A7BDF250055D0DE /* ScheduleMarshalling.swift in Sources */,
@@ -537,7 +535,6 @@
 				585575C42A42E28F00940633 /* PlugView.swift in Sources */,
 				585575BA2A42E28F00940633 /* CategoryStorage.swift in Sources */,
 				585575B82A42E28F00940633 /* TrackersViewController.swift in Sources */,
-				585575AD2A42E28F00940633 /* CategoriesView.swift in Sources */,
 				585575BC2A42E28F00940633 /* AppDelegate.swift in Sources */,
 				5863C33A2A84CDC000F2DC6D /* CategoriesVC.swift in Sources */,
 				585575C02A42E28F00940633 /* UIView+Extensions.swift in Sources */,
@@ -558,7 +555,6 @@
 				585575AA2A42E28F00940633 /* CreateTrackerViewController.swift in Sources */,
 				585575C12A42E28F00940633 /* Date+Extention.swift in Sources */,
 				585575A72A42E28F00940633 /* EmojiCollectionViewCell.swift in Sources */,
-				585575AE2A42E28F00940633 /* CategoriesViewController.swift in Sources */,
 				582B10502A7C1E7E0055D0DE /* DataProvider.swift in Sources */,
 				585575C62A42E28F00940633 /* TextFieldCustomView.swift in Sources */,
 				58BDF7DD2A7C5AB600590A6C /* TrackersDataService.swift in Sources */,

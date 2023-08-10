@@ -36,5 +36,4 @@ extension TrackerDataStore {
         category.addToTrackers(tracker)
         saveContext()
     }
-    
 }

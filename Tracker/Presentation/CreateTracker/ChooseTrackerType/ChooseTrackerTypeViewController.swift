@@ -7,6 +7,7 @@ enum TrackerType {
 
 protocol ChooseTypeTrackerViewControllerDelegate: AnyObject {
     func dimissVC(_ viewcontroller: UIViewController)
+    func shouldUpdateTrackers()
 }
 
 final class ChooseTypeTrackerViewController: UIViewController {
@@ -14,13 +15,18 @@ final class ChooseTypeTrackerViewController: UIViewController {
     weak var delegate: ChooseTypeTrackerViewControllerDelegate?
     
     private var chooseTrackerTypeView: ChooseTrackerTypeView!
-    
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         chooseTrackerTypeView = ChooseTrackerTypeView(frame: .zero, delegate: self)
         setupView()
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        delegate?.shouldUpdateTrackers()
+    }
     
+    //MARK: - Setup view
     private func setupView() {
         title = "Создание трекера"
         view.addSubview(chooseTrackerTypeView)
@@ -40,7 +46,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
         return nvc
     }
 }
-
+//MARK: - ChooseTrackerTypeViewDelegate
 extension ChooseTypeTrackerViewController: ChooseTrackerTypeViewDelegate {
     func showHabitCreaterVC() {
         let vc = createTrackerViewController(trackerType: .habit)
@@ -52,7 +58,7 @@ extension ChooseTypeTrackerViewController: ChooseTrackerTypeViewDelegate {
         present(vc, animated: true)
     }
 }
-
+//MARK: - CreateTrackerViewControllerDelegate
 extension ChooseTypeTrackerViewController: CreateTrackerViewControllerDelegate {
     func dismissViewController(_ viewController: UIViewController) {
         delegate?.dimissVC(viewController)

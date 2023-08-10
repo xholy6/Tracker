@@ -16,6 +16,11 @@ protocol TrackersServiceDataSourceProtocol {
 
 protocol TrackersServiceAddingProtocol {
     func addTracker(category: String, tracker: Tracker)
+    func addCategory(category: String)
+}
+
+protocol TrackersServiceDeletingProtocol {
+    func deleteCategory(category: String)
 }
 
 protocol TrackersServiceCompletingProtocol {
@@ -24,6 +29,7 @@ protocol TrackersServiceCompletingProtocol {
 }
 
 protocol TrackersServiceFetchingProtocol {
+    func fetchAllCategoires() -> [String]
     func fetchTrackers(weekDay: String) -> Int
     func fetchTrackers(titleSearchString: String, currentWeekDay: String) -> Int
     func fetchCompletedRecords(date: Date) -> [TrackerRecord]
@@ -41,9 +47,11 @@ TrackersServiceAddingProtocol
 & TrackersServiceCompletingProtocol
 & TrackersServiceFetchingProtocol
 & TrackersServiceDataSourceProtocol
+& TrackersServiceDeletingProtocol
 
 // MARK: - TrackersService
 final class TrackersDataService {
+    
     static let shared: TrackersServiceProtocol = TrackersDataService()
     
     private let trackersDataProvider: DataProvider?
@@ -83,6 +91,10 @@ extension TrackersDataService: TrackersServiceFetchingProtocol {
         trackersDataProvider?.fetchTrackers(titleSearchString: titleSearchString, currentDay: currentWeekDay) ?? 0
     }
     
+    func fetchAllCategoires() -> [String] {
+        trackersDataProvider?.fetchAllCategories() ?? [String]()
+    }
+    
     func fetchCompletedRecords(date: Date) -> [TrackerRecord] {
         let trackerRecordsCoreData = trackersDataProvider?.fetchCompletedRecords(date: date)
         let trackerRecords = trackerRecordsCoreData?.compactMap { trackerRecordCoreData -> TrackerRecord? in
@@ -113,6 +125,16 @@ extension TrackersDataService: TrackersServiceAddingProtocol {
     
     func addTracker(category: String, tracker: Tracker) {
         try? trackersDataProvider?.add(tracker: tracker, for: category)
+    }
+    
+    func addCategory(category: String) {
+        try? trackersDataProvider?.addCategory(category)
+    }
+}
+
+extension TrackersDataService: TrackersServiceDeletingProtocol {
+    func deleteCategory(category: String) {
+        try? trackersDataProvider?.deleteCategory(category)
     }
 }
 

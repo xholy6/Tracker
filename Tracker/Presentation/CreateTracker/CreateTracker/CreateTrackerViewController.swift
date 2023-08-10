@@ -87,6 +87,7 @@ final class CreateTrackerViewController: UIViewController {
         case .habit: return title = CreateTrackerViewControllerConstants.habitTitle
         case .irregularEvent: return title = CreateTrackerViewControllerConstants.eventTitle
         }
+        
     }
     //MARK: - Private methods
     private func setupView() {
@@ -108,8 +109,8 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     private func showCategoryViewController() {
-        let vc = CategoriesViewController()
-        vc.delegate = self
+        let vc = CategoriesVC()
+        vc.viewModelDelegate = self
         let nvc = UINavigationController(rootViewController: vc)
         present(nvc, animated: true)
     }
@@ -161,7 +162,7 @@ extension CreateTrackerViewController: CreateTrackerViewDelegate {
         return text.count >= 38 ? false : true
     }
 }
-
+//MARK: - ChooseScheduleViewControllerDelegate
 extension CreateTrackerViewController: ChooseScheduleViewControllerDelegate {
     func getSchedule(selectedDays: [WeekDay] ) {
         engSchedule = selectedDays.map {$0.engString}
@@ -170,8 +171,8 @@ extension CreateTrackerViewController: ChooseScheduleViewControllerDelegate {
         setSchedule(schedule: schedule)
     }
 }
-
-extension CreateTrackerViewController: CategoriesViewControllerDelegate {
+//MARK: - CategoriesViewControllerDelegate
+extension CreateTrackerViewController: CategoriesViewModelDelegate {
     func getCategory(with name: String) {
         category = name
         setCategory(category: name)

@@ -18,6 +18,9 @@ final class AddCategoryViewController: UIViewController {
     private var addCategoryView: AddCategoryView!
     private var category: String!
     
+    var editingType: EditingType!
+    var wordToEdit: String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         addCategoryView = AddCategoryView(frame: .zero, delegate: self)

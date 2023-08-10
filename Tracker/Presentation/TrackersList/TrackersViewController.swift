@@ -259,6 +259,9 @@ extension TrackersViewController: UISearchControllerDelegate {
 extension TrackersViewController: ChooseTypeTrackerViewControllerDelegate {
     func dimissVC(_ viewcontroller: UIViewController) {
         dismiss(animated: true)
+    }
+    
+    func shouldUpdateTrackers() {
         requestTracker(for: datePicker.date)
     }
 }

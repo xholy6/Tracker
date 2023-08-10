@@ -92,9 +92,18 @@ final class DataProvider: NSObject {
         trackerCoreData.schedule = ScheduleMarshalling.toStringFrom(array: tracker.schedule ?? [String]() )
         trackerCoreData.colorHex = UIColorMarshalling.serilizeToHex(color: tracker.color ?? .black)
         trackerCoreData.id = tracker.id
-        let categoryCoreData = trackerCategoryDataStore.addTrackerCategory(from: categoryName)
+        guard let categoryCoreData = trackerCategoryDataStore.getNeededCategory(searching: categoryName) else { return }
         trackerDataStore.addTracker(trackerCoreData, to: categoryCoreData)
     }
+    
+    func addCategory(_ category: String) throws {
+        trackerCategoryDataStore.addTrackerCategory(from: category)
+    }
+    
+    func deleteCategory(_ category: String) throws {
+        trackerCategoryDataStore.deleteCategory(category)
+    }
+    
 }
 //MARK: - TrackersDataProviderCompletingProtocol
 extension DataProvider: TrackersDataProviderCompletingProtocol {
@@ -132,6 +141,14 @@ extension DataProvider: TrackersDataProviderFetchingProtocol {
             #keyPath(TrackerCoreData.name), titleSearchString,
             #keyPath(TrackerCoreData.schedule), currentDay)
         return performFetchAndCountObjects()
+    }
+    
+    func fetchAllCategories() -> [String] {
+        let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        let categoriesCoreData = try? context.fetch(fetchRequest)
+        guard let categoriesCoreData else { return [String]() }
+        let categoriesString = categoriesCoreData.compactMap { $0.title }
+        return categoriesString
     }
     
     private func performFetchAndCountObjects() -> Int {

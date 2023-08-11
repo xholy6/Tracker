@@ -61,7 +61,8 @@ final class CategoriesCell: UITableViewCell {
         ])
     }
     
-    func configCell(categoryName: String) {
+    func configCell(categoryName: String, isSelected: Bool) {
         categoryNameLabel.text = categoryName
+        checkMarkImageView.isHidden = !isSelected
     }
 }

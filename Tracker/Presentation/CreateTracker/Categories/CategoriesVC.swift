@@ -114,10 +114,12 @@ final class CategoriesVC: UIViewController {
     }
     
     private func bind() {
-        
         viewModel?.$categories.bind{ [weak self] _ in
             self?.tableView.reloadData()
             self?.showPlugView()
+        }
+        viewModel?.$selectedCategoryIndex.bind { [weak self] _ in
+            self?.tableView.reloadData()
         }
     }
     
@@ -159,7 +161,8 @@ extension CategoriesVC: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoriesCell.identifier) as? CategoriesCell
         else { return CategoriesCell() }
         guard let category = viewModel?.categories?[indexPath.row] else { return CategoriesCell() }
-        cell.configCell(categoryName: category)
+        let isSelected = viewModel?.selectedCategoryIndex == indexPath.row
+        cell.configCell(categoryName: category, isSelected: isSelected)
         let interaction = UIContextMenuInteraction(delegate: self)
         cell.addInteraction(interaction)
         return cell
@@ -175,23 +178,8 @@ extension CategoriesVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let number = indexPath.row
         viewModel?.shouldSendSelectedCategory(categoryNumber: number)
-        
-        guard let cell = tableView.cellForRow(at: indexPath) as? CategoriesCell else {
-            return
-        }
-        
-        if let lastSelectedIndexPath = lastSelectedIndexPath {
-            guard let oldCell = tableView.cellForRow(at: lastSelectedIndexPath) as? CategoriesCell else { return }
-            tableView.deselectRow(at: lastSelectedIndexPath, animated: true)
-            oldCell.isSelectedCell.toggle()
-        }
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-        cell.isSelectedCell.toggle()
-        lastSelectedIndexPath = indexPath
+        viewModel?.selectCategory(at: number)
         dismiss(animated: true)
-        
-        
     }
     
 }

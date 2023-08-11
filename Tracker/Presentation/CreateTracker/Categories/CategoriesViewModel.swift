@@ -11,10 +11,20 @@ protocol CategoriesViewModelDelegate: AnyObject {
     func getCategory(with: String)
 }
 
+protocol ActionsWithCategoriesProtocol {
+    func isCategoriesEmpty() -> Bool
+    func shouldSendSelectedCategory(categoryNumber: Int)
+    func deleteCategory(at index: Int)
+    func selectCategory(at index: Int)
+}
+
 final class CategoriesViewModel {
     
     @Observable
     private(set) var categories: [String]?
+    
+    @Observable
+    private(set) var selectedCategoryIndex: Int?
     
     private(set) var router = CategoriesRouter()
     
@@ -24,23 +34,6 @@ final class CategoriesViewModel {
     
     
     init() {
-        fetchCategories()
-    }
-    
-    func isCategoriesEmpty() -> Bool{
-        guard let categories else { return true }
-        return !categories.isEmpty
-    }
-    
-    func shouldSendSelectedCategory(categoryNumber: Int) {
-        guard let categories else { return }
-        let category = categories[categoryNumber]
-        delegate?.getCategory(with: category)
-    }
-    
-    func deleteCategory(at index: Int) {
-        guard let categoryName = categories?[index] else { return }
-        trackersDataService.deleteCategory(category: categoryName)
         fetchCategories()
     }
     
@@ -62,7 +55,30 @@ final class CategoriesViewModel {
         categories = trackersDataService.fetchAllCategoires()
     }
 }
-
+//MARK: - ActionsWithCategoriesProtocol
+extension CategoriesViewModel: ActionsWithCategoriesProtocol {
+    func isCategoriesEmpty() -> Bool{
+        guard let categories else { return true }
+        return !categories.isEmpty
+    }
+    
+    func shouldSendSelectedCategory(categoryNumber: Int) {
+        guard let categories else { return }
+        let category = categories[categoryNumber]
+        delegate?.getCategory(with: category)
+    }
+    
+    func deleteCategory(at index: Int) {
+        guard let categoryName = categories?[index] else { return }
+        trackersDataService.deleteCategory(category: categoryName)
+        fetchCategories()
+    }
+    
+    func selectCategory(at index: Int) {
+        selectedCategoryIndex = (selectedCategoryIndex != index) ? index : nil
+    }
+}
+//MARK: - AddCategoryViewControllerDelegate
 extension CategoriesViewModel: AddCategoryViewControllerDelegate {
     func sendCategory(category: String) {
         if !(categories?.contains(category) ?? false) {

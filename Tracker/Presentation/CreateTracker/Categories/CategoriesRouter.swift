@@ -10,7 +10,8 @@ import UIKit
 protocol CategoriesRoutingLogic {
     func navigateToAddCategory(editingType: EditingType,
                                viewModel: CategoriesViewModel,
-                               word: String)
+                               word: String,
+                               viewController: UIViewController)
 }
 
 final class CategoriesRouter {
@@ -24,12 +25,13 @@ final class CategoriesRouter {
 extension CategoriesRouter: CategoriesRoutingLogic {
     func navigateToAddCategory(editingType: EditingType,
                                viewModel: CategoriesViewModel,
-                               word: String) {
+                               word: String,
+                               viewController: UIViewController) {
         let vc = AddCategoryViewController()
         vc.delegate = viewModel
         vc.editingType = editingType
         vc.wordToEdit = word
         let nvc = UINavigationController(rootViewController: vc)
-        viewController?.present(nvc, animated: true)
+        viewController.present(nvc, animated: true)
     }
 }

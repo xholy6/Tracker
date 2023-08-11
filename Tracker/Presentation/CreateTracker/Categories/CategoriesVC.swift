@@ -64,7 +64,6 @@ final class CategoriesVC: UIViewController {
         super.viewDidLoad()
         viewModel = CategoriesViewModel()
         viewModel?.delegate = viewModelDelegate
-        viewModel?.router.viewController = self
         view.backgroundColor = .white
         tableView.dataSource = self
         tableView.delegate = self
@@ -77,7 +76,11 @@ final class CategoriesVC: UIViewController {
     //MARK: - Private methods
     @objc
     private func addCategoryButtonTapped() {
-        viewModel?.presentNextVC(with: .add, nil)
+        viewModel?.presentNextVC(with: .add, at: nil, viewController: self)
+    }
+    
+    deinit {
+        print("metoo")
     }
     
     private func showAddCategoryView(editingType: EditingType)  -> UINavigationController {
@@ -204,7 +207,7 @@ extension CategoriesVC: UIContextMenuInteractionDelegate {
         let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
             let action1 = UIAction(title: "Редактировать") { [weak self] _ in
                 guard let self else { return }
-                self.viewModel?.presentNextVC(with: .edit, indexPath.row)
+                self.viewModel?.presentNextVC(with: .edit, at: indexPath.row, viewController: self)
             }
             
             

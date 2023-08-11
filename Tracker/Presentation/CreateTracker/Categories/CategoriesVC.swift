@@ -203,7 +203,7 @@ extension CategoriesVC: UIContextMenuInteractionDelegate {
                 guard let self else { return }
                 self.showActionSheet(indexPath)
             }
-            
+            cell.isSelectedCell.toggle()
             return UIMenu(title: "" , children: [action1, action2])
         }
         

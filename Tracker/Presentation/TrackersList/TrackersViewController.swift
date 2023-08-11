@@ -241,7 +241,7 @@ extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         if let text = searchController.searchBar.text {
             let count = trackersDataService.fetchTrackers(titleSearchString: text,
-                                              currentWeekDay: currentDate.stringDate)
+                                                          currentWeekDay: currentDate.stringDate)
             collectionView.reloadData()
             shouldShowPlugview(trackers: count, isSearching: true)
         }

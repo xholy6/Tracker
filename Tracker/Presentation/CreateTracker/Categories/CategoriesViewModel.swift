@@ -40,15 +40,15 @@ final class CategoriesViewModel {
     func presentNextVC(with type: EditingType, at index: Int?, viewController: UIViewController) {
         guard
             let index else { router.navigateToAddCategory(editingType: type,
-                                         viewModel: self,
-                                         word: "",
-                                        viewController: viewController)
+                                                          viewModel: self,
+                                                          word: "",
+                                                          viewController: viewController)
             return
         }
         router.navigateToAddCategory(editingType: type,
                                      viewModel: self,
                                      word: categories?[index] ?? "",
-                                        viewController: viewController)
+                                     viewController: viewController)
     }
     
     private func fetchCategories() {

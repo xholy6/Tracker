@@ -219,6 +219,41 @@ extension TrackersViewController: UICollectionViewDataSource {
         return view
     }
 }
+
+extension TrackersViewController: UICollectionViewDelegate {
+
+    func collectionView(_ collectionView: UICollectionView,
+                        contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
+                        point: CGPoint) -> UIContextMenuConfiguration? {
+
+        let actionProvider: UIContextMenuActionProvider = { suggestedActions in
+            let pinUnpinAction = UIAction(title: "Закрепить",
+                                          image: nil,
+                                          identifier: nil,
+                                          discoverabilityTitle: nil) { action in
+
+            }
+
+            let editAction = UIAction(title: "Редактировать",
+                                          image: nil,
+                                          identifier: nil,
+                                          discoverabilityTitle: nil) { action in
+
+            }
+
+            let deleteAction = UIAction(title: "Удалить",
+                                        image: nil,
+                                        identifier: nil,
+                                        discoverabilityTitle: nil,
+                                        attributes: .destructive) { action in
+            }
+
+            return UIMenu(title: "", children: [pinUnpinAction,editAction,deleteAction])
+        }
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: actionProvider)
+    }
+}
 //MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

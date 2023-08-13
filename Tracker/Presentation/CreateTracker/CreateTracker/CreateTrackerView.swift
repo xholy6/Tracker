@@ -131,7 +131,7 @@ final class CreateTrackerView: UIView {
     
     
     //MARK: - Initializer
-  
+    
     init(frame: CGRect,
          delegate: CreateTrackerViewDelegate?,
          trackerType: TrackerType ) {

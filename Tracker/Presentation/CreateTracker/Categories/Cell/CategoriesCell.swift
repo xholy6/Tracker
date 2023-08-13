@@ -6,8 +6,7 @@ final class CategoriesCell: UITableViewCell {
     
     var isSelectedCell: Bool = true {
         didSet {
-            let r = self.isSelectedCell
-            checkMarkImageView.isHidden = r
+            checkMarkImageView.isHidden = self.isSelectedCell
         }
     }
     
@@ -37,10 +36,6 @@ final class CategoriesCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-//    private func shouldShowCheckMark() -> Bool {
-//
-//    }
     
     private func setupView() {
         backgroundColor = .clear

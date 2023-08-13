@@ -14,7 +14,7 @@ enum EditingType {
 
 final class CategoriesVC: UIViewController {
     
-    private var viewModel: CategoriesViewModel?
+    var viewModel: CategoriesViewModel?
     
     private struct AddCategoryConstants {
         static let addButtontitle = "Добавить категорию"
@@ -24,11 +24,6 @@ final class CategoriesVC: UIViewController {
         объединить по смыслу
     """
     }
-    
-    var viewModelDelegate: CategoriesViewModelDelegate?
-    
-    
-    private var lastSelectedIndexPath: IndexPath?
     //MARK: - UI objects
     private lazy var plugView: PlugView = {
         let image = UIImage(named: "plugStar")
@@ -62,8 +57,6 @@ final class CategoriesVC: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel = CategoriesViewModel()
-        viewModel?.delegate = viewModelDelegate
         view.backgroundColor = .white
         tableView.dataSource = self
         tableView.delegate = self
@@ -110,7 +103,7 @@ final class CategoriesVC: UIViewController {
     
     private func showPlugView() {
         guard let viewModel else { return }
-        plugView.isHidden = viewModel.isCategoriesEmpty() ? true : false
+        plugView.isHidden = viewModel.isCategoriesEmpty()
     }
     
     private func bind() {
@@ -154,13 +147,13 @@ final class CategoriesVC: UIViewController {
 //MARK: - UITableViewDataSource
 extension CategoriesVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel?.categories?.count ?? 0
+        viewModel?.categories.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoriesCell.identifier) as? CategoriesCell
         else { return CategoriesCell() }
-        guard let category = viewModel?.categories?[indexPath.row] else { return CategoriesCell() }
+        guard let category = viewModel?.categories[indexPath.row] else { return CategoriesCell() }
         let isSelected = viewModel?.selectedCategoryIndex == indexPath.row
         cell.configCell(categoryName: category, isSelected: isSelected)
         let interaction = UIContextMenuInteraction(delegate: self)

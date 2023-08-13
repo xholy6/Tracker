@@ -91,7 +91,7 @@ final class TrackersViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupSearchController()
-        requestTracker(for: today)
+        requestTracker(for: datePicker.date)
     }
     //MARK: - Private functions
     private func requestTracker(for day: Date) {

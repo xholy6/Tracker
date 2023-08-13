@@ -21,7 +21,7 @@ protocol ActionsWithCategoriesProtocol {
 final class CategoriesViewModel {
     
     @Observable
-    private(set) var categories: [String]?
+    private(set) var categories: [String] = []
     
     @Observable
     private(set) var selectedCategoryIndex: Int?
@@ -47,7 +47,7 @@ final class CategoriesViewModel {
         }
         router.navigateToAddCategory(editingType: type,
                                      viewModel: self,
-                                     word: categories?[index] ?? "",
+                                     word: categories[index],
                                      viewController: viewController)
     }
     
@@ -58,18 +58,16 @@ final class CategoriesViewModel {
 //MARK: - ActionsWithCategoriesProtocol
 extension CategoriesViewModel: ActionsWithCategoriesProtocol {
     func isCategoriesEmpty() -> Bool{
-        guard let categories else { return true }
         return !categories.isEmpty
     }
     
     func shouldSendSelectedCategory(categoryNumber: Int) {
-        guard let categories else { return }
         let category = categories[categoryNumber]
         delegate?.getCategory(with: category)
     }
     
     func deleteCategory(at index: Int) {
-        guard let categoryName = categories?[index] else { return }
+        let categoryName = categories[index]
         trackersDataService.deleteCategory(category: categoryName)
         fetchCategories()
     }
@@ -81,9 +79,9 @@ extension CategoriesViewModel: ActionsWithCategoriesProtocol {
 //MARK: - AddCategoryViewControllerDelegate
 extension CategoriesViewModel: AddCategoryViewControllerDelegate {
     func sendCategory(category: String) {
-        if !(categories?.contains(category) ?? false) {
+        if !(categories.contains(category)) {
             trackersDataService.addCategory(category: category)
-            categories?.append(category)
+            categories.append(category)
         }
     }
     

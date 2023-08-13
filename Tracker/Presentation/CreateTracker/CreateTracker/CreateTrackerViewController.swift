@@ -37,7 +37,7 @@ final class CreateTrackerViewController: UIViewController {
     private var selectedItem: IndexPath?
     
     private let trackerDataService = TrackersDataService.shared
-
+    
     private var trackerView: CreateTrackerView!
     
     var trackerType: TrackerType!
@@ -110,8 +110,10 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     private func showCategoryViewController() {
+        let viewModel = CategoriesViewModel()
+        viewModel.delegate = self
         let vc = CategoriesVC()
-        vc.viewModelDelegate = self
+        vc.viewModel = viewModel
         let nvc = UINavigationController(rootViewController: vc)
         present(nvc, animated: true)
     }

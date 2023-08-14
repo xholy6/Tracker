@@ -39,6 +39,7 @@ protocol TrackersServiceFetchingProtocol {
     func fetchTrackers(weekDay: String) -> Int
     func fetchTrackers(titleSearchString: String, currentWeekDay: String) -> Int
     func fetchCompletedRecords(date: Date) -> [TrackerRecord]
+    func fetchAllCompletedTrackers() -> Int
     func completedTimesCount(trackerId: String) -> Int
     
     func requestDataProviderErrorAlert()
@@ -95,6 +96,10 @@ extension TrackersDataService: TrackersServiceFetchingProtocol {
     
     func fetchTrackers(titleSearchString: String, currentWeekDay: String) -> Int {
         trackersDataProvider?.fetchTrackers(titleSearchString: titleSearchString, currentDay: currentWeekDay) ?? 0
+    }
+
+    func fetchAllCompletedTrackers() -> Int {
+        trackersDataProvider?.fetchAllCompletedTrackers() ?? 0
     }
     
     func fetchAllCategoires() -> [String] {

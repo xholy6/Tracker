@@ -70,6 +70,16 @@ extension TrackerRecordDataStore {
         let records = try? context.fetch(request)
         return records?.first
     }
+
+    func completedTrackersCount() -> Int? {
+            let request = TrackerRecordCoreData.fetchRequest()
+            do {
+                let object = try self.context.fetch(request)
+                return object.count
+            } catch {
+                return nil
+            }
+        }
     
     private func saveContext() {
         if context.hasChanges {

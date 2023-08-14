@@ -28,6 +28,7 @@ protocol TrackersDataProviderFetchingProtocol {
     func fetchTrackers(currentDay: String) -> Int
     func fetchTrackers(titleSearchString: String, currentDay: String) -> Int
     func fetchCompletedRecords(date: Date) -> [TrackerRecordCoreData]
+    func fetchAllCompletedTrackers() -> Int
     func completedTimesCount(trackerId: String) -> Int
     func tracker(at indexPath: IndexPath) -> TrackerCoreData?
     func categoryTitle(at indexPath: IndexPath) -> String?
@@ -196,6 +197,10 @@ extension DataProvider: TrackersDataProviderFetchingProtocol {
             #keyPath(TrackerCoreData.name), titleSearchString,
             #keyPath(TrackerCoreData.schedule), currentDay)
         return performFetchAndCountObjects()
+    }
+
+    func fetchAllCompletedTrackers() -> Int {
+        trackerRecordDataStore.completedTrackersCount() ?? 0
     }
     
     func fetchAllCategories() -> [String] {

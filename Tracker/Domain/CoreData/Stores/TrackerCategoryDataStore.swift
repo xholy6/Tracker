@@ -59,6 +59,12 @@ extension TrackerCategoryDataStore {
         }
         saveContext()
     }
+
+    func createDefaultPinnedCategory() {
+        let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
+        trackerCategoryCoreData.title = "Pinned"
+        saveContext()
+    }
     
     private func saveContext() {
         if context.hasChanges {

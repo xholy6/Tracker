@@ -50,6 +50,8 @@ final class CategoriesVC: UIViewController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.layer.cornerRadius = 16
+        tableView.layer.masksToBounds = true
+        tableView.separatorStyle = .none
         tableView.register(CategoriesCell.self, forCellReuseIdentifier: CategoriesCell.identifier)
         return tableView
     }()
@@ -192,7 +194,7 @@ extension CategoriesVC: UIContextMenuInteractionDelegate {
             }
             
             
-            let action2 = UIAction(title: "Удалить") { [weak self] _ in
+            let action2 = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
                 guard let self else { return }
                 self.showActionSheet(indexPath)
             }

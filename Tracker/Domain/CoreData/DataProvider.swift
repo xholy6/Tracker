@@ -33,6 +33,11 @@ protocol TrackersDataProviderFetchingProtocol {
     func categoryTitle(at indexPath: IndexPath) -> String?
 }
 
+protocol TrackersDataProviderPinningProtocol {
+    func pinTracker(with id: String)
+    func unpinTracker(with id: String)
+}
+
 
 final class DataProvider: NSObject {
     private let context: NSManagedObjectContext
@@ -50,7 +55,7 @@ final class DataProvider: NSObject {
     private lazy var fetchingResultController: NSFetchedResultsController = {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         let sortDescriptors = [
-            NSSortDescriptor(key: #keyPath(TrackerCoreData.category.title), ascending: true),
+            NSSortDescriptor(key: #keyPath(TrackerCoreData.isPinned), ascending: false),
             NSSortDescriptor(key: #keyPath(TrackerCoreData.name), ascending: true)
         ]
         request.sortDescriptors = sortDescriptors
@@ -92,6 +97,8 @@ final class DataProvider: NSObject {
         trackerCoreData.schedule = ScheduleMarshalling.toStringFrom(array: tracker.schedule ?? [String]() )
         trackerCoreData.colorHex = UIColorMarshalling.serilizeToHex(color: tracker.color ?? .black)
         trackerCoreData.id = tracker.id
+        trackerCoreData.isPinned = tracker.isPinned ?? false
+        trackerCoreData.prevCategory = categoryName
         guard let categoryCoreData = trackerCategoryDataStore.getNeededCategory(searching: categoryName) else { return }
         trackerDataStore.addTracker(trackerCoreData, to: categoryCoreData)
     }
@@ -103,7 +110,44 @@ final class DataProvider: NSObject {
     func deleteCategory(_ category: String) throws {
         trackerCategoryDataStore.deleteCategory(category)
     }
+
+    func deleteTracker(with id: String) throws {
+        guard let tracker = trackerDataStore.getTracker(with: id) else { return }
+        trackerDataStore.delete(tracker)
+    }
+
+    func createPinnedCategory() {
+        trackerCategoryDataStore.createDefaultPinnedCategory()
+    }
     
+}
+//MARK: - TrackersDataProviderPinningProtocol
+extension DataProvider: TrackersDataProviderPinningProtocol {
+    func pinTracker(with id: String) {
+        guard let tracker = trackerDataStore.getTracker(with: id) else { return }
+
+        let oldCategory = tracker.category
+        tracker.prevCategory = oldCategory?.title
+        tracker.isPinned = true
+
+        guard
+            let pinnedCategory = trackerCategoryDataStore.getNeededCategory(searching: "Pinned")
+        else { return }
+
+        trackerDataStore.updateCategory(tracker: tracker, to: pinnedCategory)
+    }
+
+    func unpinTracker(with id: String) {
+        guard let tracker = trackerDataStore.getTracker(with: id) else { return }
+
+        tracker.isPinned = false
+        guard
+            let oldCategory = trackerCategoryDataStore.getNeededCategory(searching: tracker.prevCategory ?? "")
+        else { return }
+        trackerDataStore.updateCategory(tracker: tracker, to: oldCategory)
+    }
+
+
 }
 //MARK: - TrackersDataProviderCompletingProtocol
 extension DataProvider: TrackersDataProviderCompletingProtocol {
@@ -148,7 +192,8 @@ extension DataProvider: TrackersDataProviderFetchingProtocol {
         let categoriesCoreData = try? context.fetch(fetchRequest)
         guard let categoriesCoreData else { return [String]() }
         let categoriesString = categoriesCoreData.compactMap { $0.title }
-        return categoriesString
+        let filteredCategories = categoriesString.filter { $0 != "Pinned" }
+        return filteredCategories
     }
     
     func updateCategoryTitle(oldCategoryTitle: String, newCategoryTitle: String) {
@@ -159,16 +204,16 @@ extension DataProvider: TrackersDataProviderFetchingProtocol {
     
     private func performFetchAndCountObjects() -> Int {
         do {
-               try fetchingResultController.performFetch()
-               if let fetchedObjects = fetchingResultController.fetchedObjects {
-                   return fetchedObjects.count
-               } else {
-                   return 0
-               }
-           } catch {
-               print("Error fetching data: \(error.localizedDescription)")
-               return 0
-           }
+            try fetchingResultController.performFetch()
+            if let fetchedObjects = fetchingResultController.fetchedObjects {
+                return fetchedObjects.count
+            } else {
+                return 0
+            }
+        } catch {
+            print("Error fetching data: \(error.localizedDescription)")
+            return 0
+        }
     }
     
     func fetchCompletedRecords(date: Date) -> [TrackerRecordCoreData] {

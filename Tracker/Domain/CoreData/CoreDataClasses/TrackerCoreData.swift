@@ -22,6 +22,8 @@ class TrackerCoreData: NSManagedObject {
     @NSManaged var schedule: String?
     @NSManaged var category: TrackerCategoryCoreData?
     @NSManaged var records: NSSet?
+    @NSManaged var prevCategory: String?
+    @NSManaged var isPinned: Bool
 
 }
 

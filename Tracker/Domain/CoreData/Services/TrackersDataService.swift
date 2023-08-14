@@ -18,10 +18,14 @@ protocol TrackersServiceAddingAndUpdatingProtocol {
     func addTracker(category: String, tracker: Tracker)
     func addCategory(category: String)
     func updateCategory(oldTitle: String, newTitle: String)
+    func createPinnedCategory()
+    func pinTracker(_ id: String)
+    func unpinTracker(_ id: String)
 }
 
 protocol TrackersServiceDeletingProtocol {
     func deleteCategory(category: String)
+    func deleteTracker(with id: String)
 }
 
 protocol TrackersServiceCompletingProtocol {
@@ -123,7 +127,6 @@ extension TrackersDataService: TrackersServiceCompletingProtocol {
 
 // MARK: - TrackersServiceAddingProtocol
 extension TrackersDataService: TrackersServiceAddingAndUpdatingProtocol {
-    
     func addTracker(category: String, tracker: Tracker) {
         try? trackersDataProvider?.add(tracker: tracker, for: category)
     }
@@ -135,11 +138,27 @@ extension TrackersDataService: TrackersServiceAddingAndUpdatingProtocol {
     func updateCategory(oldTitle: String, newTitle: String) {
         trackersDataProvider?.updateCategoryTitle(oldCategoryTitle: oldTitle, newCategoryTitle: newTitle)
     }
+
+    func createPinnedCategory() {
+        trackersDataProvider?.createPinnedCategory()
+    }
+
+    func pinTracker(_ id: String) {
+        trackersDataProvider?.pinTracker(with: id)
+    }
+
+    func unpinTracker(_ id: String) {
+        trackersDataProvider?.unpinTracker(with: id)
+    }
 }
 
 extension TrackersDataService: TrackersServiceDeletingProtocol {
     func deleteCategory(category: String) {
         try? trackersDataProvider?.deleteCategory(category)
+    }
+
+    func deleteTracker(with id: String) {
+        try? trackersDataProvider?.deleteTracker(with: id)
     }
 }
 
@@ -165,6 +184,8 @@ extension TrackersDataService: TrackersServiceDataSourceProtocol {
             let emoji = trackerCoreData.emoji,
             let color = UIColorMarshalling.deserilizeFrom(hex: trackerCoreData.colorHex ?? String())
         else { return nil }
+
+        let isPinned = trackerCoreData.isPinned
         
         let splittedWeekDays = trackerCoreData.schedule?.components(separatedBy: ", ")
         
@@ -173,6 +194,7 @@ extension TrackersDataService: TrackersServiceDataSourceProtocol {
             name: name,
             color: color,
             emoji: emoji,
-            schedule: splittedWeekDays)
+            schedule: splittedWeekDays,
+            isPinned: isPinned)
     }
 }

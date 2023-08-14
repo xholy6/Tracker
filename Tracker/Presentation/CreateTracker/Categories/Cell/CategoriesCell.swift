@@ -29,6 +29,8 @@ final class CategoriesCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        layer.masksToBounds = true
+        layer.cornerRadius = 16
         setupView()
         activateConstraints()
     }

@@ -83,6 +83,14 @@ final class TrackerCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+
+    private lazy var pinImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "pin")
+        imageView.isHidden = true
+        return imageView
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -114,6 +122,10 @@ final class TrackerCell: UICollectionViewCell {
     
     func enabledCheckTrackerButton(enabled: Bool) {
         completeButton.isEnabled = enabled ? true : false
+    }
+
+    func showPinImage(isHidden: Bool) {
+        pinImage.isHidden = isHidden
     }
     
     private func getButtonImage(_ check: Bool) -> UIImage? {
@@ -147,6 +159,7 @@ final class TrackerCell: UICollectionViewCell {
         contentView.clipsToBounds = true
         
         contentView.addSubview(stackView)
+        contentView.addSubview(pinImage)
         stackView.addArrangedSubview(emojiAndNameView)
         stackView.addArrangedSubview(dayCountAndButtonView)
         
@@ -186,6 +199,11 @@ final class TrackerCell: UICollectionViewCell {
             completeButton.topAnchor.constraint(equalTo: dayCountAndButtonView.topAnchor, constant: 8),
             completeButton.widthAnchor.constraint(equalToConstant: 34),
             completeButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 34),
+
+            pinImage.heightAnchor.constraint(equalToConstant: 24),
+            pinImage.widthAnchor.constraint(equalToConstant: 24),
+            pinImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
+            pinImage.centerYAnchor.constraint(equalTo: emojiLabel.centerYAnchor),
         ])
     }
 }

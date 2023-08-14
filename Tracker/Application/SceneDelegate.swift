@@ -21,6 +21,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func decideToCreateVC() -> UIViewController {
         let isLaunchExists = UserDefaults.standard.bool(forKey: "isFirstAppLaunch")
+        if !isLaunchExists {
+            let trackersService = TrackersDataService.shared
+            trackersService.createPinnedCategory()
+        }
         let controller = isLaunchExists ? TabBarController() : OnboardingPageViewController()
         return controller
     }

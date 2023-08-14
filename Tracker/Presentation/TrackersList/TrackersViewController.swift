@@ -29,7 +29,7 @@ final class TrackersViewController: UIViewController {
     
     private var today: Date {
         let date = Date()
-        let today = date.getTomorrowDate
+        let today = date
         return today
     }
     
@@ -100,6 +100,9 @@ final class TrackersViewController: UIViewController {
         shouldShowPlugview(trackers: count, isSearching: false)
         collectionView.reloadData()
     }
+
+    private func deleteTracker(at indexPath: IndexPath) {
+    }
     
     private func fetchCompletedTrackersForCurrentDate() {
         let completedTrackersForCurrentDate = trackersDataService.fetchCompletedRecords(date: currentDate)
@@ -117,6 +120,9 @@ final class TrackersViewController: UIViewController {
         }
         plugView.isHidden = count != 0 ? true : false
     }
+
+    private func editTracker() {
+    }
     
     @objc
     private func addNewTracker() {
@@ -130,6 +136,24 @@ final class TrackersViewController: UIViewController {
     private func choosedDateInDatePicker() {
         requestTracker(for: datePicker.date)
     }
+
+    private func showActionSheet(_ id: String) {
+       let alertController = UIAlertController(title: nil,
+                                               message: "Уверены что хотите удалить трекер?",
+                                               preferredStyle: .actionSheet)
+
+       let deleteAction = UIAlertAction(title: "Удалить",
+                                        style: .destructive) { [weak self] _ in
+           self?.trackersDataService.deleteTracker(with: id)
+           self?.requestTracker(for: self?.datePicker.date ?? Date() )
+       }
+       let cancelAction = UIAlertAction(title: "Отмена",
+                                        style: .cancel, handler: nil)
+       alertController.addAction(cancelAction)
+       alertController.addAction(deleteAction)
+
+       present(alertController, animated: true, completion: nil)
+   }
     //MARK: - Setup UI objects
     private func setupView() {
         view.backgroundColor = .white
@@ -197,8 +221,11 @@ extension TrackersViewController: UICollectionViewDataSource {
         let completedDayCount = trackersDataService.completedTimesCount(trackerId: tracker.id)
         let isCompleted = completedTrackers
             .first(where: { $0.doneId == tracker.id && $0.date.isDayEqualTo(currentDate) }) != nil
-        cell.configCell(tracker: tracker, completedDaysCount: completedDayCount, completed: isCompleted)
+        cell.configCell(tracker: tracker,
+                        completedDaysCount: completedDayCount,
+                        completed: isCompleted)
         cell.enabledCheckTrackerButton(enabled: today > datePicker.date)
+        cell.showPinImage(isHidden: !(tracker.isPinned ?? false))
         cell.delegate = self
         return cell
     }
@@ -219,25 +246,41 @@ extension TrackersViewController: UICollectionViewDataSource {
         return view
     }
 }
-
+//MARK: - UICollectionViewDelegate
 extension TrackersViewController: UICollectionViewDelegate {
-
     func collectionView(_ collectionView: UICollectionView,
                         contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
                         point: CGPoint) -> UIContextMenuConfiguration? {
 
+        guard !indexPaths.isEmpty, let tracker = trackersDataService.tracker(at: indexPaths[0]) else {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
+        }
+
+        let date: Date = datePicker.date
+
         let actionProvider: UIContextMenuActionProvider = { suggestedActions in
-            let pinUnpinAction = UIAction(title: "Закрепить",
-                                          image: nil,
-                                          identifier: nil,
-                                          discoverabilityTitle: nil) { action in
+            let pinAction = UIAction(title: "Закрепить",
+                                     image: nil,
+                                     identifier: nil,
+                                     discoverabilityTitle: nil) { [weak self] action in
+                self?.trackersDataService.pinTracker(tracker.id)
+                self?.requestTracker(for: date)
 
             }
 
+            let unpinAction = UIAction(title: "Открепить",
+                                 image: nil,
+                                 identifier: nil,
+                                 discoverabilityTitle: nil) { [weak self] action in
+                self?.trackersDataService.unpinTracker(tracker.id)
+                self?.requestTracker(for: date)
+            }
+
+
             let editAction = UIAction(title: "Редактировать",
-                                          image: nil,
-                                          identifier: nil,
-                                          discoverabilityTitle: nil) { action in
+                                      image: nil,
+                                      identifier: nil,
+                                      discoverabilityTitle: nil) { [weak self] action in
 
             }
 
@@ -245,10 +288,16 @@ extension TrackersViewController: UICollectionViewDelegate {
                                         image: nil,
                                         identifier: nil,
                                         discoverabilityTitle: nil,
-                                        attributes: .destructive) { action in
+                                        attributes: .destructive) { [weak self] action in
+                self?.showActionSheet(tracker.id)
+            }
+            switch tracker.isPinned {
+            case true:
+                return UIMenu(title: "", children: [unpinAction,editAction,deleteAction])
+            default:
+                return UIMenu(title: "", children: [pinAction,editAction,deleteAction])
             }
 
-            return UIMenu(title: "", children: [pinUnpinAction,editAction,deleteAction])
         }
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: actionProvider)

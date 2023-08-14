@@ -148,9 +148,12 @@ final class EditTrackerView: UIView {
         self.delegate = delegate
         self.trackerType = trackerType
         super.init(frame: frame)
+        let intDays = Int(dayCount) ?? 0
         nameTrackerTextField.text = trackerName
-        daysCountLabel.text = dayCount
-        backgroundColor = .white
+        daysCountLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("CountDay", comment: ""),
+            intDays)
+        backgroundColor = UIColor.systemBackground
         translatesAutoresizingMaskIntoConstraints = false
         setupView()
         activateConstraints()

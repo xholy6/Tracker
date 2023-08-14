@@ -140,7 +140,9 @@ final class TrackerCell: UICollectionViewCell {
     
     private func setDaysLabel() {
         let stringDay = String.getDayAddition(int: daysCount)
-        dayCountLabel.text = "\(daysCount) \(stringDay)"
+        dayCountLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("CountDay", comment: ""),
+            daysCount)
     }
     
     @objc

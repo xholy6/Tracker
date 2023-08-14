@@ -24,6 +24,7 @@ final class StatisticsView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         translatesAutoresizingMaskIntoConstraints = false
+        backgroundColor = UIColor.systemBackground
         setupView()
     }
 

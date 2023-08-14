@@ -20,7 +20,9 @@ final class TrackersViewController: UIViewController {
     
     private let trackersDataService = TrackersDataService.shared
     private let searchController = UISearchController(searchResultsController: nil)
-    
+
+    private var filteringType: FilterTypes?
+
     private var currentDate: Date {
         let date = datePicker.date
         let currentDate = date.getTomorrowDate
@@ -43,13 +45,25 @@ final class TrackersViewController: UIViewController {
         button.tintColor = .ypBlack
         return button
     }()
+
+    private lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(NSLocalizedString("Filters", comment: ""), for: .normal)
+        button.titleLabel?.font = .ypRegular17
+        button.backgroundColor = .ypBlue
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
-        datePicker.locale = Locale(identifier: "ru_RU")
+        //datePicker.locale = Locale.current
         datePicker.calendar = Calendar(identifier: .iso8601)
         datePicker.addTarget(self, action: #selector(choosedDateInDatePicker), for: .valueChanged)
         
@@ -78,7 +92,7 @@ final class TrackersViewController: UIViewController {
     private lazy var plugView: PlugView = {
         let plugView = PlugView(
             frame: .zero,
-            titleLabel: "Что будем отслеживать?",
+            titleLabel: NSLocalizedString("What are we gonna track?", comment: ""),
             image: UIImage(named: "plugStar") ?? UIImage()
         )
         plugView.isHidden = true
@@ -94,6 +108,14 @@ final class TrackersViewController: UIViewController {
         requestTracker(for: datePicker.date)
     }
     //MARK: - Private functions
+    @objc
+    private func filterButtonTapped() {
+        let vc = FilterTrackersViewController()
+        vc.delegate = self
+        let navVC = UINavigationController(rootViewController: vc)
+        present(navVC, animated: true)
+    }
+
     private func requestTracker(for day: Date) {
         let count = trackersDataService.fetchTrackers(weekDay: day.stringDate)
         fetchCompletedTrackersForCurrentDate()
@@ -109,10 +131,10 @@ final class TrackersViewController: UIViewController {
     private func shouldShowPlugview(trackers count: Int, isSearching: Bool) {
         switch isSearching {
         case true:
-            plugView.config(title: "Ничего не найдено",
+            plugView.config(title: NSLocalizedString("Nothing found", comment: ""),
                             image: UIImage(named: "notFound"))
         default:
-            plugView.config(title: "Что будем отслеживать?",
+            plugView.config(title: NSLocalizedString("What are we gonna track?", comment: ""),
                             image: UIImage(named: "plugStar"))
         }
         plugView.isHidden = count != 0 ? true : false
@@ -159,7 +181,7 @@ final class TrackersViewController: UIViewController {
     //MARK: - Setup UI objects
     private func setupView() {
         view.backgroundColor =  UIColor.systemBackground 
-        view.addSubViews(collectionView, plugView)
+        view.addSubViews(collectionView, plugView, filterButton)
         navigationItem.leftBarButtonItem = addNewTrackerButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
@@ -171,15 +193,21 @@ final class TrackersViewController: UIViewController {
             
             plugView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             plugView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            filterButton.heightAnchor.constraint(equalToConstant: 52),
+            filterButton.widthAnchor.constraint(equalToConstant: 112),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
+        searchController.searchBar.placeholder = NSLocalizedString("Search", comment: "")
         searchController.delegate = self
-        searchController.searchBar.setValue("Отмена", forKey: "cancelButtonText")
+        searchController.searchBar.setValue(NSLocalizedString("Cancel", comment: ""),
+                                            forKey: "cancelButtonText")
         searchController.hidesNavigationBarDuringPresentation = false
         navigationItem.searchController = searchController
         definesPresentationContext = true
@@ -244,7 +272,8 @@ extension TrackersViewController: UICollectionViewDataSource {
         guard let title = categoryTitle(at: indexPath) else { view.config(title: "")
             return view
         }
-        view.config(title: title)
+
+        view.config(title: NSLocalizedString(title, comment: ""))
         return view
     }
 }
@@ -264,7 +293,7 @@ extension TrackersViewController: UICollectionViewDelegate {
         let date: Date = datePicker.date
 
         let actionProvider: UIContextMenuActionProvider = { suggestedActions in
-            let pinAction = UIAction(title: "Закрепить",
+            let pinAction = UIAction(title: NSLocalizedString("Pin", comment: ""),
                                      image: nil,
                                      identifier: nil,
                                      discoverabilityTitle: nil) { [weak self] action in
@@ -273,7 +302,7 @@ extension TrackersViewController: UICollectionViewDelegate {
 
             }
 
-            let unpinAction = UIAction(title: "Открепить",
+            let unpinAction = UIAction(title: NSLocalizedString("Unpin", comment: ""),
                                  image: nil,
                                  identifier: nil,
                                  discoverabilityTitle: nil) { [weak self] action in
@@ -282,14 +311,14 @@ extension TrackersViewController: UICollectionViewDelegate {
             }
 
 
-            let editAction = UIAction(title: "Редактировать",
+            let editAction = UIAction(title: NSLocalizedString("Edit", comment: ""),
                                       image: nil,
                                       identifier: nil,
                                       discoverabilityTitle: nil) { [weak self] action in
                 self?.editTracker(indexPaths.first ?? [0,0])
             }
 
-            let deleteAction = UIAction(title: "Удалить",
+            let deleteAction = UIAction(title: NSLocalizedString("Delete", comment: ""),
                                         image: nil,
                                         identifier: nil,
                                         discoverabilityTitle: nil,
@@ -362,6 +391,14 @@ extension TrackersViewController: EditTrackerViewControllerDelegate {
     func shouldUpdateTrackersAfterEdit() {
         requestTracker(for: datePicker.date)
     }
+}
+
+extension TrackersViewController: FilterTrackersViewControllerDelegate {
+    func sendFilterType(_ type: FilterTypes) {
+        filteringType = type
+    }
+
+
 }
 //MARK: - DataServiceCollectionProtocol
 extension TrackersViewController: DataServiceCollectionProtocol {

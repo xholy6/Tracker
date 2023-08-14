@@ -1,0 +1,25 @@
+/* 
+ Localizable.strings
+ Tracker
+
+ Created by D on 14.08.2023.
+
+ */
+
+"pinned" = "Закрепленные";
+"filterAllTrackers" = "Все трекеры";
+"trackersForToday" = "Трекеры на сегодня";
+"completedTrackers" = "Завершенные";
+"uncomplitedTrackers" = "Не завершенные";
+"Filters" = "Фильтры";
+"Trackers" = "Трекеры";
+"Statistics" = "Статистика";
+"Pinned" = "Закрепленные";
+"Search" = "Поиск";
+"Cancel" = "Отмена";
+"Nothing found" = "Ничего не найдено";
+"What are we gonna track?" = "Что будем отслеживать?";
+"Pin" = "Закрепить";
+"Unpin" = "Открепить";
+"Edit" = "Редактировать";
+"Delete" = "Удалить";

@@ -27,6 +27,13 @@ final class ScheduleCell: UITableViewCell {
         switchView.addTarget(self, action: #selector(switchChanged), for: .valueChanged)
         return switchView
     }()
+
+    private lazy var lineView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .ypGray
+        return view
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -45,7 +52,8 @@ final class ScheduleCell: UITableViewCell {
         contentView.layer.masksToBounds = true
         contentView.backgroundColor = .ypLightGray
         contentView.addSubViews(dayLabel,
-                                switchView)
+                                switchView,
+                                lineView)
     }
     
     private func activateConstraints() {
@@ -56,7 +64,11 @@ final class ScheduleCell: UITableViewCell {
             
             switchView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             switchView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-//            switchView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.25)
+            
+            lineView.leadingAnchor.constraint(equalTo: dayLabel.leadingAnchor),
+            lineView.trailingAnchor.constraint(equalTo: switchView.trailingAnchor),
+            lineView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            lineView.heightAnchor.constraint(equalToConstant: 0.5)
 
         ])
     }

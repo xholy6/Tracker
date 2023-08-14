@@ -19,7 +19,9 @@ final class TrackersViewController: UIViewController {
     private var completedTrackers: Set<TrackerRecord> = []
     
     private let trackersDataService = TrackersDataService.shared
+    private let analytics = AnalyticsService()
     private let searchController = UISearchController(searchResultsController: nil)
+
 
     private var filteringType: FilterTypes?
 
@@ -107,6 +109,20 @@ final class TrackersViewController: UIViewController {
         setupSearchController()
         requestTracker(for: datePicker.date)
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        reportAnalytics(event: .open, screen: .trackersList, item: nil)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        reportAnalytics(event: .close, screen: .trackersList, item: nil)
+    }
+    //MARK: - Analytics
+    private func reportAnalytics(event: Event, screen: Screen, item: Item?) {
+        analytics.report(event: event, screen: screen, item: item)
+    }
     //MARK: - Private functions
     @objc
     private func filterButtonTapped() {
@@ -114,6 +130,7 @@ final class TrackersViewController: UIViewController {
         vc.delegate = self
         let navVC = UINavigationController(rootViewController: vc)
         present(navVC, animated: true)
+        reportAnalytics(event: .click, screen: .trackersList, item: .filter)
     }
 
     private func requestTracker(for day: Date) {
@@ -154,6 +171,7 @@ final class TrackersViewController: UIViewController {
         vc.delegate = self
         let navVC = UINavigationController(rootViewController: vc)
         present(navVC, animated: true)
+        reportAnalytics(event: .click, screen: .trackersList, item: .addTracker)
     }
     
     @objc
@@ -316,6 +334,7 @@ extension TrackersViewController: UICollectionViewDelegate {
                                       identifier: nil,
                                       discoverabilityTitle: nil) { [weak self] action in
                 self?.editTracker(indexPaths.first ?? [0,0])
+                self?.reportAnalytics(event: .click, screen: .trackersList, item: .edit)
             }
 
             let deleteAction = UIAction(title: NSLocalizedString("Delete", comment: ""),
@@ -324,6 +343,7 @@ extension TrackersViewController: UICollectionViewDelegate {
                                         discoverabilityTitle: nil,
                                         attributes: .destructive) { [weak self] action in
                 self?.showActionSheet(tracker.id)
+                self?.reportAnalytics(event: .click, screen: .trackersList, item: .delete)
             }
             switch tracker.isPinned {
             case true:

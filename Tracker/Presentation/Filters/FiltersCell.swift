@@ -26,6 +26,13 @@ final class FilterCell: UITableViewCell {
         imageView.isHidden = true
         return imageView
     }()
+    
+    private lazy var lineView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .ypGray
+        return view
+    }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -40,7 +47,7 @@ final class FilterCell: UITableViewCell {
     private func setupView() {
         backgroundColor = .clear
         contentView.backgroundColor = .ypLightGray
-        contentView.addSubViews(filterName, checkMarkImageView)
+        contentView.addSubViews(filterName, checkMarkImageView, lineView)
     }
 
     private func activateConstraints() {
@@ -53,6 +60,11 @@ final class FilterCell: UITableViewCell {
             checkMarkImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             checkMarkImageView.heightAnchor.constraint(equalToConstant: 24),
             checkMarkImageView.widthAnchor.constraint(equalToConstant: 24),
+
+            lineView.leadingAnchor.constraint(equalTo: filterName.leadingAnchor),
+            lineView.trailingAnchor.constraint(equalTo: checkMarkImageView.trailingAnchor),
+            lineView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            lineView.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
 

@@ -13,6 +13,7 @@ final class ChooseScheduleView: UIView {
         tableView.layer.cornerRadius = 16
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.identifier)
+        tableView.separatorStyle = .none
         return tableView
     }()
     

@@ -117,6 +117,16 @@ final class DataProvider: NSObject {
         trackerDataStore.delete(tracker)
     }
 
+    func updateTracker(with id: String, by updatedTracker: Tracker, for category: String) {
+        guard let tracker = trackerDataStore.getTracker(with: id) else { return }
+        tracker.emoji = updatedTracker.emoji
+        tracker.schedule = ScheduleMarshalling.toStringFrom(array: updatedTracker.schedule ?? [String]())
+        tracker.name = updatedTracker.name
+        tracker.colorHex = UIColorMarshalling.serilizeToHex(color: updatedTracker.color ?? .black)
+        guard let categoryCoreData = trackerCategoryDataStore.getNeededCategory(searching: category) else { return }
+        trackerDataStore.addTracker(tracker, to: categoryCoreData)
+    }
+
     func createPinnedCategory() {
         trackerCategoryDataStore.createDefaultPinnedCategory()
     }

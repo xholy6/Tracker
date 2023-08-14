@@ -18,6 +18,7 @@ protocol TrackersServiceAddingAndUpdatingProtocol {
     func addTracker(category: String, tracker: Tracker)
     func addCategory(category: String)
     func updateCategory(oldTitle: String, newTitle: String)
+    func updateTracker(with id: String, by tracker: Tracker, for category: String) 
     func createPinnedCategory()
     func pinTracker(_ id: String)
     func unpinTracker(_ id: String)
@@ -137,6 +138,10 @@ extension TrackersDataService: TrackersServiceAddingAndUpdatingProtocol {
     
     func updateCategory(oldTitle: String, newTitle: String) {
         trackersDataProvider?.updateCategoryTitle(oldCategoryTitle: oldTitle, newCategoryTitle: newTitle)
+    }
+
+    func updateTracker(with id: String, by tracker: Tracker, for category: String) {
+        trackersDataProvider?.updateTracker(with: id, by: tracker, for: category)
     }
 
     func createPinnedCategory() {

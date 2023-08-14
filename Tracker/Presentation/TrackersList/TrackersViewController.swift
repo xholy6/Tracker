@@ -100,9 +100,6 @@ final class TrackersViewController: UIViewController {
         shouldShowPlugview(trackers: count, isSearching: false)
         collectionView.reloadData()
     }
-
-    private func deleteTracker(at indexPath: IndexPath) {
-    }
     
     private func fetchCompletedTrackersForCurrentDate() {
         let completedTrackersForCurrentDate = trackersDataService.fetchCompletedRecords(date: currentDate)
@@ -121,7 +118,12 @@ final class TrackersViewController: UIViewController {
         plugView.isHidden = count != 0 ? true : false
     }
 
-    private func editTracker() {
+    private func editTracker(_ indexPath: IndexPath) {
+        let vc = EditTrackerViewController()
+        vc.indexPath = indexPath
+        vc.delegate = self
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
     }
     
     @objc
@@ -252,7 +254,10 @@ extension TrackersViewController: UICollectionViewDelegate {
                         contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
                         point: CGPoint) -> UIContextMenuConfiguration? {
 
-        guard !indexPaths.isEmpty, let tracker = trackersDataService.tracker(at: indexPaths[0]) else {
+        guard
+            !indexPaths.isEmpty,
+                let tracker = trackersDataService.tracker(at: indexPaths.first ?? [0,0])
+        else {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
         }
 
@@ -281,7 +286,7 @@ extension TrackersViewController: UICollectionViewDelegate {
                                       image: nil,
                                       identifier: nil,
                                       discoverabilityTitle: nil) { [weak self] action in
-
+                self?.editTracker(indexPaths.first ?? [0,0])
             }
 
             let deleteAction = UIAction(title: "Удалить",
@@ -338,13 +343,23 @@ extension TrackersViewController: UISearchControllerDelegate {
         requestTracker(for: currentDate)
     }
 }
-
+//MARK: - ViewControllersDelegates
 extension TrackersViewController: ChooseTypeTrackerViewControllerDelegate {
     func dimissVC(_ viewcontroller: UIViewController) {
         dismiss(animated: true)
     }
     
     func shouldUpdateTrackers() {
+        requestTracker(for: datePicker.date)
+    }
+}
+
+extension TrackersViewController: EditTrackerViewControllerDelegate {
+    func dismissViewController(_ viewController: UIViewController) {
+        dismiss(animated: true)
+    }
+
+    func shouldUpdateTrackersAfterEdit() {
         requestTracker(for: datePicker.date)
     }
 }

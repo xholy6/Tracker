@@ -41,6 +41,8 @@ final class ScheduleCell: UITableViewCell {
     
     private func setupView() {
         backgroundColor = .clear
+        contentView.layer.cornerRadius = 16
+        contentView.layer.masksToBounds = true
         contentView.backgroundColor = .ypLightGray
         contentView.addSubViews(dayLabel,
                                 switchView)

@@ -12,6 +12,7 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="prevCategory" attributeType="String"/>
         <attribute name="schedule" attributeType="String"/>
+        <attribute name="type" attributeType="String"/>
         <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCategoryCoreData" inverseName="trackers" inverseEntity="TrackerCategoryCoreData"/>
         <relationship name="records" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrackerRecordCoreData" inverseName="tracker" inverseEntity="TrackerRecordCoreData"/>
     </entity>

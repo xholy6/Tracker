@@ -92,6 +92,7 @@ final class DataProvider: NSObject {
     
     func add(tracker: Tracker, for categoryName: String) throws {
         let trackerCoreData = TrackerCoreData(context: context)
+        trackerCoreData.type = tracker.type?.toString
         trackerCoreData.name = tracker.name
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.schedule = ScheduleMarshalling.toStringFrom(array: tracker.schedule ?? [String]() )

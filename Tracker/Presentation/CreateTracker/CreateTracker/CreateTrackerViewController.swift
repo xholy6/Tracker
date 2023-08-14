@@ -152,7 +152,8 @@ extension CreateTrackerViewController: CreateTrackerViewDelegate {
                           color: selectedColor,
                           emoji: selectedEmoji,
                           schedule: engSchedule,
-                          isPinned: false)
+                          isPinned: false,
+                          type: trackerType)
         guard let tracker else { return }
         trackerDataService.addTracker(category: category, tracker: tracker)
         delegate?.dismissViewController(self)

@@ -29,7 +29,7 @@ final class TrackersViewController: UIViewController {
     
     private var today: Date {
         let date = Date()
-        let today = date
+        let today = date.getTomorrowDate
         return today
     }
     

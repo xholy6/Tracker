@@ -24,6 +24,7 @@ class TrackerCoreData: NSManagedObject {
     @NSManaged var records: NSSet?
     @NSManaged var prevCategory: String?
     @NSManaged var isPinned: Bool
+    @NSManaged var type: String?
 
 }
 

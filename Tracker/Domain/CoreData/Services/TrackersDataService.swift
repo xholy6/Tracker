@@ -182,7 +182,9 @@ extension TrackersDataService: TrackersServiceDataSourceProtocol {
             let id = trackerCoreData.id,
             let name = trackerCoreData.name,
             let emoji = trackerCoreData.emoji,
-            let color = UIColorMarshalling.deserilizeFrom(hex: trackerCoreData.colorHex ?? String())
+            let color = UIColorMarshalling.deserilizeFrom(hex: trackerCoreData.colorHex ?? String()),
+            let type = trackerCoreData.type?.trackerType
+
         else { return nil }
 
         let isPinned = trackerCoreData.isPinned
@@ -195,6 +197,7 @@ extension TrackersDataService: TrackersServiceDataSourceProtocol {
             color: color,
             emoji: emoji,
             schedule: splittedWeekDays,
-            isPinned: isPinned)
+            isPinned: isPinned,
+            type: type)
     }
 }

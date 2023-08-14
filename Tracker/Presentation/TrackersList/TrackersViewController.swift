@@ -158,7 +158,7 @@ final class TrackersViewController: UIViewController {
    }
     //MARK: - Setup UI objects
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor =  UIColor.systemBackground 
         view.addSubViews(collectionView, plugView)
         navigationItem.leftBarButtonItem = addNewTrackerButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)

@@ -34,7 +34,7 @@ final class TrackerCell: UICollectionViewCell {
     private lazy var dayCountLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .ypBlack
+        label.textColor = UIColor.label
         label.font = .ypMedium12
         label.numberOfLines = 1
         return label
@@ -63,7 +63,7 @@ final class TrackerCell: UICollectionViewCell {
         let button = UIButton()
         let image = getButtonImage(completedTracker)
         button.setImage(image, for: .normal)
-        button.tintColor = .white
+        button.tintColor = UIColor.systemBackground
         button.translatesAutoresizingMaskIntoConstraints = false
         button.clipsToBounds = true
         button.backgroundColor = .ypColor3

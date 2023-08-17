@@ -43,12 +43,12 @@ final class StatisticsViewController: UIViewController {
     }
 
     private func makeStatistics() {
-        let best = StatisticModel(count: 0, name: StatisticsViewControllerConstants.best)
-        let perfect = StatisticModel(count: 0, name: StatisticsViewControllerConstants.perfect)
+        let best = StatisticModel(count: .zero, name: StatisticsViewControllerConstants.best)
+        let perfect = StatisticModel(count: .zero, name: StatisticsViewControllerConstants.perfect)
         let completedCount = trackersDataService.fetchAllCompletedTrackers()
         let completed = StatisticModel(count: completedCount,
                                        name: StatisticsViewControllerConstants.completed)
-        let average = StatisticModel(count: 0, name: StatisticsViewControllerConstants.average)
+        let average = StatisticModel(count: .zero, name: StatisticsViewControllerConstants.average)
         statistics = [best, perfect, completed, average]
     }
 
@@ -62,6 +62,7 @@ extension StatisticsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         4
     }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
             let cell = tableView.dequeueReusableCell(

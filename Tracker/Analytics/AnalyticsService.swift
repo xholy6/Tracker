@@ -17,7 +17,7 @@ enum Screen: String {
 
 enum Item: String {
     case addTracker = "add_tracker"
-    case filter, edit, delete
+    case filter, edit, delete, track
 }
 
 struct AnalyticsService {

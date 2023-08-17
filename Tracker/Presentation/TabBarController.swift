@@ -34,7 +34,7 @@ final class TabBarController: UITabBarController {
         let tabBarItems: [TabBarItems] = [.tracker, .statistics]
         tabBar.tintColor = .ypBlue
         tabBar.unselectedItemTintColor = .ypGray
-        tabBar.backgroundColor = UIColor.systemBackground
+        tabBar.backgroundColor = .ypDayNight
         
         viewControllers = tabBarItems.map({ item in
             switch item {

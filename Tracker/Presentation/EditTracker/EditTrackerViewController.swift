@@ -156,22 +156,20 @@ extension EditTrackerViewController: ChooseScheduleViewControllerDelegate {
         schedule = daysString
         setSchedule(schedule: schedule?.joined(separator: ", "))
     }
-
-
 }
+
 extension EditTrackerViewController: CategoriesViewModelDelegate {
     func getCategory(with name: String) {
         category = name
         setCategory(category: name)
     }
-
-
 }
 //MARK: - UITableViewDataSource
 extension EditTrackerViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch trackerType {
         case .habit:
@@ -292,7 +290,11 @@ extension EditTrackerViewController: UICollectionViewDataSource {
 }
 //MARK: - UICollectionViewDelegateFlowLayout
 extension EditTrackerViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         let bounds = editTrackerView.bounds
         let leftInset: CGFloat = 16
         let rightInset: CGFloat = 16

@@ -138,7 +138,7 @@ final class CreateTrackerView: UIView {
         self.delegate = delegate
         self.trackerType = trackerType
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .ypDayNight
         translatesAutoresizingMaskIntoConstraints = false
         setupView()
         activateConstraints()

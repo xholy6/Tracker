@@ -29,7 +29,7 @@ final class FilterTrackersViewController: UIViewController {
     private let filters: [FilterTypes] = FilterTypes.allCases
 
     private func setupView() {
-        view.backgroundColor = UIColor.systemBackground
+        view.backgroundColor = .ypDayNight
         view.addSubview(filtersView)
         NSLayoutConstraint.activate([
             filtersView.topAnchor.constraint(equalTo: view.topAnchor),

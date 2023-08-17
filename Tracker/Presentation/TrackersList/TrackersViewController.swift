@@ -88,6 +88,7 @@ final class TrackersViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.backgroundColor = .ypDayNight
         return collectionView
     }()
     
@@ -119,10 +120,12 @@ final class TrackersViewController: UIViewController {
         super.viewDidDisappear(animated)
         reportAnalytics(event: .close, screen: .trackersList, item: nil)
     }
+
     //MARK: - Analytics
     private func reportAnalytics(event: Event, screen: Screen, item: Item?) {
         analytics.report(event: event, screen: screen, item: item)
     }
+
     //MARK: - Private functions
     @objc
     private func filterButtonTapped() {
@@ -162,6 +165,7 @@ final class TrackersViewController: UIViewController {
         vc.indexPath = indexPath
         vc.delegate = self
         let navVc = UINavigationController(rootViewController: vc)
+        reportAnalytics(event: .click, screen: .trackersList, item: .edit)
         present(navVc, animated: true)
     }
     
@@ -170,8 +174,8 @@ final class TrackersViewController: UIViewController {
         let vc = ChooseTypeTrackerViewController()
         vc.delegate = self
         let navVC = UINavigationController(rootViewController: vc)
-        present(navVC, animated: true)
         reportAnalytics(event: .click, screen: .trackersList, item: .addTracker)
+        present(navVC, animated: true)
     }
     
     @objc
@@ -198,7 +202,7 @@ final class TrackersViewController: UIViewController {
    }
     //MARK: - Setup UI objects
     private func setupView() {
-        view.backgroundColor =  UIColor.systemBackground 
+        view.backgroundColor =  .ypDayNight
         view.addSubViews(collectionView, plugView, filterButton)
         navigationItem.leftBarButtonItem = addNewTrackerButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
@@ -245,6 +249,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
             trackersDataService.incompleteTracker(trackerId: id, date: currentDate)
             completedTrackers.remove(completedTracker)
         }
+        analytics.report(event: .click, screen: .trackersList, item: .track)
     }
 }
 

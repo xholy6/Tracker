@@ -7,10 +7,10 @@
  */
 
 "pinned" = "Закрепленные";
-"filterAllTrackers" = "Все трекеры";
-"trackersForToday" = "Трекеры на сегодня";
-"completedTrackers" = "Завершенные";
-"uncomplitedTrackers" = "Не завершенные";
+"Filter all trackers" = "Все трекеры";
+"Trackers for today" = "Трекеры на сегодня";
+"Completed trackers" = "Завершенные";
+"Uncomplited trackers" = "Не завершенные";
 "Filters" = "Фильтры";
 "Trackers" = "Трекеры";
 "Statistics" = "Статистика";

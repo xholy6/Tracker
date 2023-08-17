@@ -164,7 +164,8 @@ extension DataProvider: TrackersDataProviderPinningProtocol {
 //MARK: - TrackersDataProviderCompletingProtocol
 extension DataProvider: TrackersDataProviderCompletingProtocol {
     func completeTracker(with id: String, date: Date) {
-        try? trackerRecordDataStore.completeTracker(with: id, date: date)
+        guard let tracker = trackerDataStore.getTracker(with: id) else { return }
+        try? trackerRecordDataStore.completeTracker(with: id, date: date, to: tracker)
     }
     
     func incompleteTracker(with id: String, date: Date) {

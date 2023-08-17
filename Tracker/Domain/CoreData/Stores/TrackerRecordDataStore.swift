@@ -18,8 +18,9 @@ final class TrackerRecordDataStore {
 
 extension TrackerRecordDataStore {
     
-    func completeTracker(with id: String, date: Date) throws {
+    func completeTracker(with id: String, date: Date, to tracker: TrackerCoreData) throws {
         let record = TrackerRecordCoreData(context: context)
+        record.tracker = tracker
         record.doneId = id
         record.date = date
         saveContext()

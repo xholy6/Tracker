@@ -1,4 +1,4 @@
-![demonstration](https://drive.google.com/file/d/1Hj-LfYX8vlJdoBfaSzSh054URflTiWMo/view)
+[Видео работы приложения](https://drive.google.com/file/d/1Hj-LfYX8vlJdoBfaSzSh054URflTiWMo/view)
 
 # ТЗ мобильного приложения для трекинга привычек
 

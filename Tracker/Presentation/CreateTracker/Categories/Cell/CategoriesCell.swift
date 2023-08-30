@@ -26,9 +26,18 @@ final class CategoriesCell: UITableViewCell {
         imageView.isHidden = true
         return imageView
     }()
+
+    private lazy var lineView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .ypGray
+        return view
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        contentView.layer.cornerRadius = 16
+        contentView.layer.masksToBounds = true
         setupView()
         activateConstraints()
     }
@@ -40,7 +49,7 @@ final class CategoriesCell: UITableViewCell {
     private func setupView() {
         backgroundColor = .clear
         contentView.backgroundColor = .ypLightGray
-        contentView.addSubViews(categoryNameLabel, checkMarkImageView)
+        contentView.addSubViews(categoryNameLabel, checkMarkImageView, lineView)
     }
     
     private func activateConstraints() {
@@ -53,6 +62,11 @@ final class CategoriesCell: UITableViewCell {
             checkMarkImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             checkMarkImageView.heightAnchor.constraint(equalToConstant: 24),
             checkMarkImageView.widthAnchor.constraint(equalToConstant: 24),
+
+            lineView.leadingAnchor.constraint(equalTo: categoryNameLabel.leadingAnchor),
+            lineView.trailingAnchor.constraint(equalTo: checkMarkImageView.trailingAnchor),
+            lineView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            lineView.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
     

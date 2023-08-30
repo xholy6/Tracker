@@ -3,6 +3,13 @@ import UIKit
 enum TrackerType {
     case habit
     case irregularEvent
+
+    var toString: String {
+        switch self {
+        case .habit: return "habit"
+        case .irregularEvent: return "event"
+        }
+    }
 }
 
 protocol ChooseTypeTrackerViewControllerDelegate: AnyObject {

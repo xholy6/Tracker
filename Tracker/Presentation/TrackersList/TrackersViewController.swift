@@ -19,8 +19,12 @@ final class TrackersViewController: UIViewController {
     private var completedTrackers: Set<TrackerRecord> = []
     
     private let trackersDataService = TrackersDataService.shared
+    private let analytics = AnalyticsService()
     private let searchController = UISearchController(searchResultsController: nil)
-    
+
+
+    private var filteringType: FilterTypes?
+
     private var currentDate: Date {
         let date = datePicker.date
         let currentDate = date.getTomorrowDate
@@ -43,13 +47,25 @@ final class TrackersViewController: UIViewController {
         button.tintColor = .ypBlack
         return button
     }()
+
+    private lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(NSLocalizedString("Filters", comment: ""), for: .normal)
+        button.titleLabel?.font = .ypRegular17
+        button.backgroundColor = .ypBlue
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
-        datePicker.locale = Locale(identifier: "ru_RU")
+        //datePicker.locale = Locale.current
         datePicker.calendar = Calendar(identifier: .iso8601)
         datePicker.addTarget(self, action: #selector(choosedDateInDatePicker), for: .valueChanged)
         
@@ -72,13 +88,14 @@ final class TrackersViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.backgroundColor = .ypDayNight
         return collectionView
     }()
     
     private lazy var plugView: PlugView = {
         let plugView = PlugView(
             frame: .zero,
-            titleLabel: "Что будем отслеживать?",
+            titleLabel: NSLocalizedString("What are we gonna track?", comment: ""),
             image: UIImage(named: "plugStar") ?? UIImage()
         )
         plugView.isHidden = true
@@ -93,7 +110,32 @@ final class TrackersViewController: UIViewController {
         setupSearchController()
         requestTracker(for: datePicker.date)
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        reportAnalytics(event: .open, screen: .trackersList, item: nil)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        reportAnalytics(event: .close, screen: .trackersList, item: nil)
+    }
+
+    //MARK: - Analytics
+    private func reportAnalytics(event: Event, screen: Screen, item: Item?) {
+        analytics.report(event: event, screen: screen, item: item)
+    }
+
     //MARK: - Private functions
+    @objc
+    private func filterButtonTapped() {
+        let vc = FilterTrackersViewController()
+        vc.delegate = self
+        let navVC = UINavigationController(rootViewController: vc)
+        present(navVC, animated: true)
+        reportAnalytics(event: .click, screen: .trackersList, item: .filter)
+    }
+
     private func requestTracker(for day: Date) {
         let count = trackersDataService.fetchTrackers(weekDay: day.stringDate)
         fetchCompletedTrackersForCurrentDate()
@@ -109,13 +151,22 @@ final class TrackersViewController: UIViewController {
     private func shouldShowPlugview(trackers count: Int, isSearching: Bool) {
         switch isSearching {
         case true:
-            plugView.config(title: "Ничего не найдено",
+            plugView.config(title: NSLocalizedString("Nothing found", comment: ""),
                             image: UIImage(named: "notFound"))
         default:
-            plugView.config(title: "Что будем отслеживать?",
+            plugView.config(title: NSLocalizedString("What are we gonna track?", comment: ""),
                             image: UIImage(named: "plugStar"))
         }
         plugView.isHidden = count != 0 ? true : false
+    }
+
+    private func editTracker(_ indexPath: IndexPath) {
+        let vc = EditTrackerViewController()
+        vc.indexPath = indexPath
+        vc.delegate = self
+        let navVc = UINavigationController(rootViewController: vc)
+        reportAnalytics(event: .click, screen: .trackersList, item: .edit)
+        present(navVc, animated: true)
     }
     
     @objc
@@ -123,6 +174,7 @@ final class TrackersViewController: UIViewController {
         let vc = ChooseTypeTrackerViewController()
         vc.delegate = self
         let navVC = UINavigationController(rootViewController: vc)
+        reportAnalytics(event: .click, screen: .trackersList, item: .addTracker)
         present(navVC, animated: true)
     }
     
@@ -130,10 +182,28 @@ final class TrackersViewController: UIViewController {
     private func choosedDateInDatePicker() {
         requestTracker(for: datePicker.date)
     }
+
+    private func showActionSheet(_ id: String) {
+       let alertController = UIAlertController(title: nil,
+                                               message: "Уверены что хотите удалить трекер?",
+                                               preferredStyle: .actionSheet)
+
+       let deleteAction = UIAlertAction(title: "Удалить",
+                                        style: .destructive) { [weak self] _ in
+           self?.trackersDataService.deleteTracker(with: id)
+           self?.requestTracker(for: self?.datePicker.date ?? Date() )
+       }
+       let cancelAction = UIAlertAction(title: "Отмена",
+                                        style: .cancel, handler: nil)
+       alertController.addAction(cancelAction)
+       alertController.addAction(deleteAction)
+
+       present(alertController, animated: true, completion: nil)
+   }
     //MARK: - Setup UI objects
     private func setupView() {
-        view.backgroundColor = .white
-        view.addSubViews(collectionView, plugView)
+        view.backgroundColor =  .ypDayNight
+        view.addSubViews(collectionView, plugView, filterButton)
         navigationItem.leftBarButtonItem = addNewTrackerButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
@@ -145,15 +215,21 @@ final class TrackersViewController: UIViewController {
             
             plugView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             plugView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            filterButton.heightAnchor.constraint(equalToConstant: 52),
+            filterButton.widthAnchor.constraint(equalToConstant: 112),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
+        searchController.searchBar.placeholder = NSLocalizedString("Search", comment: "")
         searchController.delegate = self
-        searchController.searchBar.setValue("Отмена", forKey: "cancelButtonText")
+        searchController.searchBar.setValue(NSLocalizedString("Cancel", comment: ""),
+                                            forKey: "cancelButtonText")
         searchController.hidesNavigationBarDuringPresentation = false
         navigationItem.searchController = searchController
         definesPresentationContext = true
@@ -173,6 +249,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
             trackersDataService.incompleteTracker(trackerId: id, date: currentDate)
             completedTrackers.remove(completedTracker)
         }
+        analytics.report(event: .click, screen: .trackersList, item: .track)
     }
 }
 
@@ -197,8 +274,11 @@ extension TrackersViewController: UICollectionViewDataSource {
         let completedDayCount = trackersDataService.completedTimesCount(trackerId: tracker.id)
         let isCompleted = completedTrackers
             .first(where: { $0.doneId == tracker.id && $0.date.isDayEqualTo(currentDate) }) != nil
-        cell.configCell(tracker: tracker, completedDaysCount: completedDayCount, completed: isCompleted)
+        cell.configCell(tracker: tracker,
+                        completedDaysCount: completedDayCount,
+                        completed: isCompleted)
         cell.enabledCheckTrackerButton(enabled: today > datePicker.date)
+        cell.showPinImage(isHidden: !(tracker.isPinned ?? false))
         cell.delegate = self
         return cell
     }
@@ -215,8 +295,71 @@ extension TrackersViewController: UICollectionViewDataSource {
         guard let title = categoryTitle(at: indexPath) else { view.config(title: "")
             return view
         }
-        view.config(title: title)
+
+        view.config(title: NSLocalizedString(title, comment: ""))
         return view
+    }
+}
+//MARK: - UICollectionViewDelegate
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView,
+                        contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
+                        point: CGPoint) -> UIContextMenuConfiguration? {
+
+        guard
+            !indexPaths.isEmpty,
+                let tracker = trackersDataService.tracker(at: indexPaths.first ?? [0,0])
+        else {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
+        }
+
+        let date: Date = datePicker.date
+
+        let actionProvider: UIContextMenuActionProvider = { suggestedActions in
+            let pinAction = UIAction(title: NSLocalizedString("Pin", comment: ""),
+                                     image: nil,
+                                     identifier: nil,
+                                     discoverabilityTitle: nil) { [weak self] action in
+                self?.trackersDataService.pinTracker(tracker.id)
+                self?.requestTracker(for: date)
+
+            }
+
+            let unpinAction = UIAction(title: NSLocalizedString("Unpin", comment: ""),
+                                 image: nil,
+                                 identifier: nil,
+                                 discoverabilityTitle: nil) { [weak self] action in
+                self?.trackersDataService.unpinTracker(tracker.id)
+                self?.requestTracker(for: date)
+            }
+
+
+            let editAction = UIAction(title: NSLocalizedString("Edit", comment: ""),
+                                      image: nil,
+                                      identifier: nil,
+                                      discoverabilityTitle: nil) { [weak self] action in
+                self?.editTracker(indexPaths.first ?? [0,0])
+                self?.reportAnalytics(event: .click, screen: .trackersList, item: .edit)
+            }
+
+            let deleteAction = UIAction(title: NSLocalizedString("Delete", comment: ""),
+                                        image: nil,
+                                        identifier: nil,
+                                        discoverabilityTitle: nil,
+                                        attributes: .destructive) { [weak self] action in
+                self?.showActionSheet(tracker.id)
+                self?.reportAnalytics(event: .click, screen: .trackersList, item: .delete)
+            }
+            switch tracker.isPinned {
+            case true:
+                return UIMenu(title: "", children: [unpinAction,editAction,deleteAction])
+            default:
+                return UIMenu(title: "", children: [pinAction,editAction,deleteAction])
+            }
+
+        }
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: actionProvider)
     }
 }
 //MARK: - UICollectionViewDelegateFlowLayout
@@ -254,7 +397,7 @@ extension TrackersViewController: UISearchControllerDelegate {
         requestTracker(for: currentDate)
     }
 }
-
+//MARK: - ViewControllersDelegates
 extension TrackersViewController: ChooseTypeTrackerViewControllerDelegate {
     func dimissVC(_ viewcontroller: UIViewController) {
         dismiss(animated: true)
@@ -263,6 +406,24 @@ extension TrackersViewController: ChooseTypeTrackerViewControllerDelegate {
     func shouldUpdateTrackers() {
         requestTracker(for: datePicker.date)
     }
+}
+
+extension TrackersViewController: EditTrackerViewControllerDelegate {
+    func dismissViewController(_ viewController: UIViewController) {
+        dismiss(animated: true)
+    }
+
+    func shouldUpdateTrackersAfterEdit() {
+        requestTracker(for: datePicker.date)
+    }
+}
+
+extension TrackersViewController: FilterTrackersViewControllerDelegate {
+    func sendFilterType(_ type: FilterTypes) {
+        filteringType = type
+    }
+
+
 }
 //MARK: - DataServiceCollectionProtocol
 extension TrackersViewController: DataServiceCollectionProtocol {

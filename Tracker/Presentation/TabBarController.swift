@@ -9,9 +9,9 @@ final class TabBarController: UITabBarController {
         var title: String {
             switch self {
             case .tracker:
-                return "Трекеры"
+                return NSLocalizedString("Trackers", comment: "")
             case .statistics:
-                return "Статистика"
+                return NSLocalizedString("Statistics", comment: "")
             }
         }
         
@@ -34,7 +34,7 @@ final class TabBarController: UITabBarController {
         let tabBarItems: [TabBarItems] = [.tracker, .statistics]
         tabBar.tintColor = .ypBlue
         tabBar.unselectedItemTintColor = .ypGray
-        tabBar.backgroundColor = .white
+        tabBar.backgroundColor = .ypDayNight
         
         viewControllers = tabBarItems.map({ item in
             switch item {

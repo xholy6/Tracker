@@ -18,10 +18,15 @@ protocol TrackersServiceAddingAndUpdatingProtocol {
     func addTracker(category: String, tracker: Tracker)
     func addCategory(category: String)
     func updateCategory(oldTitle: String, newTitle: String)
+    func updateTracker(with id: String, by tracker: Tracker, for category: String) 
+    func createPinnedCategory()
+    func pinTracker(_ id: String)
+    func unpinTracker(_ id: String)
 }
 
 protocol TrackersServiceDeletingProtocol {
     func deleteCategory(category: String)
+    func deleteTracker(with id: String)
 }
 
 protocol TrackersServiceCompletingProtocol {
@@ -34,6 +39,7 @@ protocol TrackersServiceFetchingProtocol {
     func fetchTrackers(weekDay: String) -> Int
     func fetchTrackers(titleSearchString: String, currentWeekDay: String) -> Int
     func fetchCompletedRecords(date: Date) -> [TrackerRecord]
+    func fetchAllCompletedTrackers() -> Int
     func completedTimesCount(trackerId: String) -> Int
     
     func requestDataProviderErrorAlert()
@@ -91,6 +97,10 @@ extension TrackersDataService: TrackersServiceFetchingProtocol {
     func fetchTrackers(titleSearchString: String, currentWeekDay: String) -> Int {
         trackersDataProvider?.fetchTrackers(titleSearchString: titleSearchString, currentDay: currentWeekDay) ?? 0
     }
+
+    func fetchAllCompletedTrackers() -> Int {
+        trackersDataProvider?.fetchAllCompletedTrackers() ?? 0
+    }
     
     func fetchAllCategoires() -> [String] {
         trackersDataProvider?.fetchAllCategories() ?? [String]()
@@ -123,7 +133,6 @@ extension TrackersDataService: TrackersServiceCompletingProtocol {
 
 // MARK: - TrackersServiceAddingProtocol
 extension TrackersDataService: TrackersServiceAddingAndUpdatingProtocol {
-    
     func addTracker(category: String, tracker: Tracker) {
         try? trackersDataProvider?.add(tracker: tracker, for: category)
     }
@@ -135,11 +144,31 @@ extension TrackersDataService: TrackersServiceAddingAndUpdatingProtocol {
     func updateCategory(oldTitle: String, newTitle: String) {
         trackersDataProvider?.updateCategoryTitle(oldCategoryTitle: oldTitle, newCategoryTitle: newTitle)
     }
+
+    func updateTracker(with id: String, by tracker: Tracker, for category: String) {
+        trackersDataProvider?.updateTracker(with: id, by: tracker, for: category)
+    }
+
+    func createPinnedCategory() {
+        trackersDataProvider?.createPinnedCategory()
+    }
+
+    func pinTracker(_ id: String) {
+        trackersDataProvider?.pinTracker(with: id)
+    }
+
+    func unpinTracker(_ id: String) {
+        trackersDataProvider?.unpinTracker(with: id)
+    }
 }
 
 extension TrackersDataService: TrackersServiceDeletingProtocol {
     func deleteCategory(category: String) {
         try? trackersDataProvider?.deleteCategory(category)
+    }
+
+    func deleteTracker(with id: String) {
+        try? trackersDataProvider?.deleteTracker(with: id)
     }
 }
 
@@ -163,8 +192,12 @@ extension TrackersDataService: TrackersServiceDataSourceProtocol {
             let id = trackerCoreData.id,
             let name = trackerCoreData.name,
             let emoji = trackerCoreData.emoji,
-            let color = UIColorMarshalling.deserilizeFrom(hex: trackerCoreData.colorHex ?? String())
+            let color = UIColorMarshalling.deserilizeFrom(hex: trackerCoreData.colorHex ?? String()),
+            let type = trackerCoreData.type?.trackerType
+
         else { return nil }
+
+        let isPinned = trackerCoreData.isPinned
         
         let splittedWeekDays = trackerCoreData.schedule?.components(separatedBy: ", ")
         
@@ -173,6 +206,8 @@ extension TrackersDataService: TrackersServiceDataSourceProtocol {
             name: name,
             color: color,
             emoji: emoji,
-            schedule: splittedWeekDays)
+            schedule: splittedWeekDays,
+            isPinned: isPinned,
+            type: type)
     }
 }

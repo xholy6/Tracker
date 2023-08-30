@@ -31,4 +31,15 @@ extension String {
             return nil
         }
     }
+
+    var trackerType: TrackerType?{
+        switch self {
+        case "habit":
+            return .habit
+        case "event":
+            return .irregularEvent
+        default:
+            return nil
+        }
+    }
 }

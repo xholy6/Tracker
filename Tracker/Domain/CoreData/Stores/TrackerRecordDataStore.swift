@@ -18,8 +18,9 @@ final class TrackerRecordDataStore {
 
 extension TrackerRecordDataStore {
     
-    func completeTracker(with id: String, date: Date) throws {
+    func completeTracker(with id: String, date: Date, to tracker: TrackerCoreData) throws {
         let record = TrackerRecordCoreData(context: context)
+        record.tracker = tracker
         record.doneId = id
         record.date = date
         saveContext()
@@ -70,6 +71,16 @@ extension TrackerRecordDataStore {
         let records = try? context.fetch(request)
         return records?.first
     }
+
+    func completedTrackersCount() -> Int? {
+            let request = TrackerRecordCoreData.fetchRequest()
+            do {
+                let object = try self.context.fetch(request)
+                return object.count
+            } catch {
+                return nil
+            }
+        }
     
     private func saveContext() {
         if context.hasChanges {

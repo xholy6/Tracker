@@ -36,5 +36,29 @@ extension TrackerDataStore {
         category.addToTrackers(tracker)
         saveContext()
     }
+
+    func delete(_ tracker: TrackerCoreData) {
+        context.delete(tracker)
+        saveContext()
+    }
+
+    func updateCategory(tracker: TrackerCoreData, to category: TrackerCategoryCoreData?) {
+        tracker.category?.removeFromTrackers(tracker)
+        category?.addToTrackers(tracker)
+        tracker.category = category
+        saveContext()
+    }
+
+    func getTracker(with id: String) -> TrackerCoreData? {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(
+            format: "%K == %@",
+            #keyPath(TrackerCoreData.id), id)
+        request.predicate = predicate
+
+        let tracker = try? context.fetch(request).first
+        return tracker
+
+    }
     
 }

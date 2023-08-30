@@ -22,7 +22,7 @@ final class PlugView: UIStackView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .ypMedium12
-        label.textColor = .ypBlack
+        label.textColor = UIColor.label
         label.textAlignment = .center
         label.numberOfLines = 0
         return label

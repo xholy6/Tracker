@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "mach_msg2_trap:(null)">
+         <PersistentStrings>
+            <PersistentString
+               value = "viewModel?.router.viewController">
+            </PersistentString>
+            <PersistentString
+               value = "schedule">
+            </PersistentString>
+            <PersistentString
+               value = "categories">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in TrackersViewController.collectionView(_:contextMenuConfigurationForItemsAt:point:):TrackersViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "tracker.isPinned">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "CategoriesVC.addCategoryButtonTapped():CategoriesVC.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "viewModel?.router?.viewController">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "EditTrackerViewController.prepView():EditTrackerViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "schedule">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "DataProvider.add(tracker:for:):DataProvider.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "trackerCoreData.isPinned">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "EditTrackerViewController.collectionView(_:cellForItemAt:):EditTrackerViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "selectedColor">
+            </PersistentString>
+            <PersistentString
+               value = "colors[safe: indexPath.row]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "EditTrackerViewController.sendTrackerName(trackerName:):EditTrackerViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "engSchedule">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

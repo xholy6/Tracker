@@ -23,11 +23,47 @@ final class TrackerCategoryDataStore {
 
 extension TrackerCategoryDataStore {
     
-    func addTrackerCategory(from category: String) -> TrackerCategoryCoreData {
+    func addTrackerCategory(from category: String) {
         let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
         trackerCategoryCoreData.title = category
         saveContext()
-        return trackerCategoryCoreData
+    }
+    
+    func deleteCategory(_ category: String) {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(
+            format: "%K == %@", #keyPath(TrackerCategoryCoreData.title), category)
+        let categories = try? context.fetch(request)
+        if let categoryToDelete = categories?.first {
+            context.delete(categoryToDelete)
+            saveContext()
+        }
+    }
+    
+    func getNeededCategory(searching category: String) -> TrackerCategoryCoreData? {
+        let request = TrackerCategoryCoreData.fetchRequest()
+        let predicate = NSPredicate(
+            format: "%K == %@",
+            #keyPath(TrackerCategoryCoreData.title), category)
+        request.predicate = predicate
+        
+        let category = try? context.fetch(request).first
+        return category
+        
+    }
+    
+    func updateCategoryTitleAndRelationships(oldCategoryTitle: String, newCategoryTitle: String) {
+        guard let oldCategory = getNeededCategory(searching: oldCategoryTitle) else { return }
+        context.performAndWait {
+            oldCategory.title = newCategoryTitle
+        }
+        saveContext()
+    }
+
+    func createDefaultPinnedCategory() {
+        let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
+        trackerCategoryCoreData.title = "Pinned"
+        saveContext()
     }
     
     private func saveContext() {

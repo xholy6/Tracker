@@ -2,12 +2,16 @@ import UIKit
 
 protocol AddCategoryViewDelegate: AnyObject {
     func confirmNewCategory(with text: String)
-    func dismissVC()
+    func dismissAddingCategoryVC()
+    func dismissEditinCategoryVC()
 }
 
 final class AddCategoryView: UIView {
     
     weak var delegate: AddCategoryViewDelegate?
+    
+    private let editingType: EditingType?
+    private let editingWord: String?
     
     private struct AddCategoryViewConstants {
         static let textFieldPlaceholder = "Введите название трекера"
@@ -35,8 +39,13 @@ final class AddCategoryView: UIView {
         return button
     }()
     
-    init(frame: CGRect, delegate: AddCategoryViewDelegate?) {
+    init(frame: CGRect,
+         delegate: AddCategoryViewDelegate?,
+         editType: EditingType,
+         word: String) {
+        self.editingWord = word
         self.delegate = delegate
+        self.editingType = editType
         super.init(frame: frame)
         translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = .white
@@ -55,6 +64,14 @@ final class AddCategoryView: UIView {
     
     private func activateConstraints() {
         let edge: CGFloat = 16
+        
+        switch editingType {
+        case .edit:
+            textField.placeholder = nil
+            textField.text = editingWord
+        default: break
+        }
+        
         NSLayoutConstraint.activate([
             textField.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 10),
             textField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: edge),
@@ -81,7 +98,10 @@ final class AddCategoryView: UIView {
     private func doneButtonTapped() {
         guard let text = textField.text else { return }
         delegate?.confirmNewCategory(with: text)
-        delegate?.dismissVC()
+        switch editingType {
+        case .add: delegate?.dismissAddingCategoryVC()
+        default: delegate?.dismissEditinCategoryVC()
+        }
     }
     
 }
